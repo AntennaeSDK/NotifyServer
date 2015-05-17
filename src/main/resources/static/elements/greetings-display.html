@@ -1,0 +1,61 @@
+<link rel="import" href="/js/bower_components/polymer/polymer.html" ></link>
+<link rel="import" href="/js/bower_components/paper-elements/paper-elements.html"></link>
+
+<polymer-element name="greetings-display" attributes="id content">
+<template>
+<style>
+div.bubble {
+	margin: 20px;
+	padding: 80px 20px;
+	border-radius: 20px;
+	background-color: #eee;
+}
+paper-button[raised].colored {
+    background: #4285f4;
+    color: #647644;
+}
+</style>
+<core-ajax id="resourceEndPoint"
+			url="/rtracker/resource"
+			handleAs="json"
+			response="{{greeting}}"
+			on-core-error="{{resourceError}}"
+			on-core-complete="{{onComplete}}">
+</core-ajax>
+
+<div class="bubble">
+	<h1>Greetings</h1>
+	<p>The ID is {{greeting.id}}</p>
+	<p>The content is {{greeting.content}}</p>
+	<p><paper-button raised on-click="{{reload}}" class="colored">Refresh</paper-button></p>
+</div>
+<paper-toast id="errorToast" text="Error!"></paper-toast>
+
+</template>
+<script>
+Polymer({
+	// use "created" function to initialize complex properties
+	created : function(){
+		this.greeting = { 
+				id: "827686283", 
+				content:"This is awesome"
+		};
+	},
+	ready: function(){
+		this.$.resourceEndPoint.go();	
+	},
+	reload: function(){
+		this.$.resourceEndPoint.go();
+	},
+	resourceError: function(){
+		this.$.errorToast.text = "Resource error";
+		this.$.errorToast.show();
+	},
+	onComplete: function(){
+		this.$.errorToast.text = "Resource Loaded";
+		this.$.errorToast.show();
+	}
+
+});
+</script>
+</polymer-element>

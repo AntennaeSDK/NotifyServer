@@ -1,0 +1,259 @@
+<html>
+<head>
+	
+	<!--  include polyfill -->
+	<script src="/js/bower_components/webcomponentsjs/webcomponents.js"></script>
+	<link rel="import" href="/js/bower_components/core-elements/core-elements.html"></link>
+	<link rel="import" href="/js/bower_components/paper-elements/paper-elements.html"></link>
+	
+	<style>
+    body {
+      font-family: 'Roboto 2', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      margin: 0;
+      background: #f6f6f6;
+    }
+
+    .green {
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 150px;
+      background: #70c26f;
+    }
+
+    .light_grey {
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 150px;
+      background: #e0e0e0;
+    }
+
+    
+    h2{
+    	top : 100px;
+    	text-align: center;
+    	color: #7e7e7e;
+    	font-size: 3em;
+    }
+    
+    
+  </style>
+</head>
+<body fullbleed vertical layout unresolved>
+
+	
+<polymer-element name="notify-demo">
+ <template id="notify_template">
+
+    <style>
+      .chip-container {
+        position: absolute;
+        top: 275px;
+        right: 0;
+        left: 0;
+        text-align: center;
+      }
+
+      .chip {
+        display: inline-block;
+        position: relative;
+        border-radius: 3px;
+        margin: 4px;
+        overflow: hidden;
+        text-align: start;
+        background-color: #fff;
+        box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.16);
+      }
+
+      .chip-top {
+        width: 200px;
+        height: 200px;
+      }
+
+      .chip-bottom {
+        padding: 8px;
+        line-height: 1.5;
+      }
+
+      .chip-album-title {
+        font-weight: bold;
+      }
+
+      #details {
+        padding: 200px 10% 0;
+      }
+
+      .card {
+        height: 400px;
+        border-radius: 3px;
+        text-align: start;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      }
+
+      .card-left {
+        width: 400px;
+      }
+
+      .card-right {
+        padding: 24px;
+      }
+
+      .card-icon {
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        margin-right: 16px;
+      }
+
+      .card-album-title {
+        font-size: 2em;
+      }
+      
+      div #notify-box-div {
+      	width : 100%;
+      }
+      
+      paper-button[raised].colored {
+    	background: #4285f4;
+    	color: #fff;
+	  }
+	  
+	  paper-input-decorator {
+			width: 80%;
+      }
+	  
+    </style>
+
+	<core-ajax id="resourceEndPoint"
+				url="/notification"
+				method="post" 
+				body="{'title' : '{{alert.problem}}', 'severity': '{{alert.status}}', 'message' : '{{alert.message}}', 'action': '{{alert.action}}' }"
+				handleAs="json"
+				response="{{response}}"
+				on-core-error="{{resourceError}}"
+				on-core-complete="{{onComplete}}">
+	</core-ajax>
+	<paper-toast id="errorToast" text="Error!"></paper-toast>
+	
+    <core-animated-pages selected="{{page}}" transitions="hero-transition" on-core-animated-pages-transition-end="{{complete}}">
+
+      <section>
+        <div class="chip-container" hero-p on-tap="{{transition}}">
+          <template repeat="{{items as item}}">
+            <div class="chip" hero-id="{{item.pools}}-{{item.status}}" hero?="{{alert === item }}">
+              <div class="chip-top" style="background:{{item.color}};" hero-id="{{item.pools}}-{{item.status}}-art" hero?="{{alert === item}}"></div>
+              <div class="chip-bottom">
+                <div class="chip-album-title">{{item.status}}</div>
+                <div class="chip-artist">{{item.pools}}</div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </section>
+
+      <section id="details">
+        <div class="card" layout horizontal hero-id="{{alert.pools}}-{{alert.status}}" hero on-tap="{{transition}}">
+          <div class="card-left" style="background:{{alert.color}};" hero-id="{{alert.pools}}-{{alert.status}}-art" hero></div>
+          <div class="card-right" flex>
+            <div layout horizontal center>
+              <div>
+                <div class="card-icon" style="background:{{alert.color}};"></div>
+              </div>
+              <div flex>
+                <div class="card-album-title">{{alert.status}}</div>
+                <div class="card-album-artist">{{alert.pools}}</div>
+              </div>
+              <div>
+              	<paper-icon-button icon="clear" title="clear" on-click="{{close}}" ></paper-icon-button>
+              </div>
+            </div>
+            <div layout horizontal center>
+            	<div>
+            		<div class="card-icon"></div>
+            	</div>
+            	<div layout vertical id="notify-box-div">
+           			<div>
+           				<h3>{{alert.problem}}</h3>
+           				<div>
+           					<p>
+           						<label>
+           							<B>Status</B>
+           							<paper-input-decorator label="Title">
+										<input id="n_message" is="core-input" maxlength="50" value="{{alert.message}}">
+										<paper-char-counter class="counter" target="n-title"></paper-char-counter>
+	    							</paper-input-decorator>
+           						</label>
+           					</p>
+           					<p>
+           						<label>
+           							<B>Action</B>
+           							<paper-input-decorator label="Description">
+										<input id="n_action" is="core-input" maxlength="90" value="{{alert.action}}">
+										<paper-char-counter class="counter" target="description"></paper-char-counter>
+	    							</paper-input-decorator>
+           						</label>
+           					</p>
+           				</div>
+           			</div>
+            		<div>            		
+            		<paper-button raised class="colored"  on-click="{{submit}}" >Notify</paper-button>
+            		</div>
+            	</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </core-animated-pages>
+  </template>
+  
+  <script>
+    Polymer('notify-demo', {
+		page: 0,
+		items: [
+			{ pools: '550 Apps', status: 'NORMAL', color: '#01A46D', problem: 'Normal Conditions', message:'No issues reported', action : 'No Action necessary' },
+			{ pools: '120 Apps', status: 'UNDER WATCH', color: '#377FC7', problem: 'Login takes 50ms more', message : 'Login team invetigating.', action:'App teams may be notified, if problem deteriorates' },
+			{ pools: '53 Apps', status: 'ELEVATED', color: '#F5D800', problem: 'MongoDB performance issue', message : 'DBAs fixing the issue', action:'Prepare to join the bridge in 30 minutes.' }, //F50800
+			{ pools: '18 Apps', status: 'HIGH', color: '#FF9B2B', problem: 'DDoS attack on search services', message : 'SEO partners, CC involved', action:'Join the bridge #5542 ASAP' },
+			{ pools: '8 Apps', status: 'SEVERE', color: '#F50800', problem: 'Java Sandbox Vulnerability', message : 'Security team investigating', action:'Join the bridge #3342 ASAP' } // EC3E40
+		],
+		alert: null,
+		notification: null,
+		transition: function(e) {
+			if (this.page === 0 && e.target.templateInstance.model.item) {
+				this.alert = e.target.templateInstance.model.item;
+				this.page = 1;
+			} else {
+				//this.page = 0;
+			}
+		},
+		close : function(e){
+			if( this.page === 1 ){
+				this.page = 0;
+			}
+		},
+		submit: function(e){
+			this.$.resourceEndPoint.go();
+		},
+		onComplete: function(){
+			this.$.errorToast.text = "Notification Sent";
+			this.$.errorToast.show();
+		}
+    });
+    
+    document.addEventListener('polymer-ready', function() {
+        var tmplate = document.querySelector('#notify_template');
+      });
+  </script>
+  </polymer-element>
+
+  <div class="light_grey">
+  	<H2>NOTIFY DASHBOARD</H2>
+  </div>
+
+  <notify-demo></notify-demo>
+</body>
