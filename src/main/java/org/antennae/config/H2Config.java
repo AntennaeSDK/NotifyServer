@@ -33,8 +33,8 @@ public class H2Config {
 		EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
 		
 		builder.setType(EmbeddedDatabaseType.H2);
-		builder.addScript("/db/h2/h2-create-db.sql");
-		builder.addScript("/db/h2/h2-insert-data.sql");
+		builder.addScript("/db/h2/create-db.sql");
+		builder.addScript("/db/h2/insert-data.sql");
 		
 		EmbeddedDatabase database = builder.build();
 		
