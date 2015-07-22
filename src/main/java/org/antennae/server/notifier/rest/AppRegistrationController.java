@@ -25,15 +25,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class AppRegistrationController {
 
-	@RequestMapping(value="/app/registration", method=RequestMethod.POST)
+	@RequestMapping(value="/api/registration", method=RequestMethod.POST)
 	@ResponseBody
 	public void register( @RequestBody String json){
 		System.out.println("JSON : " + json );
+		
 	}
 	
-	@RequestMapping(value="/app/registration", method=RequestMethod.GET)
+	@RequestMapping(value="/api/registration", method=RequestMethod.GET)
 	@ResponseBody
-	public void get(){
+	public String get(){
 		System.out.println("Received the GET Api call");
+		return "Received : ";
 	}
 }

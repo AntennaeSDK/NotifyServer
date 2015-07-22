@@ -14,22 +14,52 @@
  * limitations under the License.
  */
 
-package org.antennae.transport;
+package org.antennae.server.notifier.entities;
+
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+import org.antennae.transport.PhoneTypeEnum;
 
 import com.google.gson.Gson;
 
 public class DeviceInfo {
 
+	@Id
+	@Column(name="ID")
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private int id;
+	
+	@Column(name="DEVICE_ID")
     private String deviceId;
+	
+	@Column(name="SW_VERSION")
     private String softwareVersion;
+	
+	@Column(name="SIM_SERIAL_NUM")
     private String simSerialNumber;
-    private String voiceMailNumber;
+    
+	@Column(name="VOICEMAIL_NUM")
+	private String voiceMailNumber;
+	
+	@Column(name="SIM_OPERATOR")
     private String simOperatorName;
 
+	@Column(name="PHONE_NUM")
     private String phoneNumber;
+	
+	@Column(name="PHONE_TYPE")
     private PhoneTypeEnum phoneType;
+	
+	@Column(name="NETWORK_COUNTRY")
     private String networkCountryIso;
+	
+	@Column(name="NETWORK_OPERATOR_ID")
     private String networkOperatorId;
+	
+	@Column(name="NETWORK_OPERATOR_NAME")
     private String networkOperatorName;
     
     

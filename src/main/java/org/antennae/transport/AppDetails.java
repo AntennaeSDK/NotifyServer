@@ -16,6 +16,9 @@
 
 package org.antennae.transport;
 
+import org.antennae.server.notifier.entities.AppInfo;
+import org.antennae.server.notifier.entities.DeviceInfo;
+
 import com.google.gson.Gson;
 
 public class AppDetails {

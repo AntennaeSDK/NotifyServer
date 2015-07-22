@@ -14,18 +14,64 @@
  * limitations under the License.
  */
 
-package org.antennae.transport;
+package org.antennae.server.notifier.entities;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 import com.google.gson.Gson;
 
+@Entity
+@Table(name="APP_INFO")
 public class AppInfo {
 
+	@Id
+	@Column(name="ID")
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private int id;
+	
+	@Column(name="GCM_REGID")
+	private String gcmRegistrationId;
+
+	@Column(name="APNS_REGID")
+	private String apnsRegistrationId;
+
+	@Column(name="APP_VERSION")
     private int appVersion;
+	
+	@Column(name="APP_ID")
     private String appId;
+	
+	@Column(name="FIRST_INSTLL_TIME")
     private long firstInstallTime;
+	
+	@Column(name="LAST_UPDATE_TIME")
     private long lastUpdateTime;
     
-    
+	
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getGcmRegistrationId() {
+		return gcmRegistrationId;
+	}
+	public void setGcmRegistrationId(String gcmRegistrationId) {
+		this.gcmRegistrationId = gcmRegistrationId;
+	}
+	public String getApnsRegistrationId() {
+		return apnsRegistrationId;
+	}
+	public void setApnsRegistrationId(String apnsRegistrationId) {
+		this.apnsRegistrationId = apnsRegistrationId;
+	}
 	public int getAppVersion() {
 		return appVersion;
 	}
