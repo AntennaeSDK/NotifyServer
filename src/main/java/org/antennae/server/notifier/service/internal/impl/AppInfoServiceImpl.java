@@ -14,40 +14,42 @@
  * limitations under the License.
  */
 
-package org.antennae.server.notifier.repository.impl;
+package org.antennae.server.notifier.service.internal.impl;
 
 import javax.inject.Inject;
 
-import org.antennae.server.notifier.entities.DeviceInfo;
-import org.antennae.server.notifier.repository.IDeviceInfoDao;
-import org.hibernate.SessionFactory;
-import org.springframework.stereotype.Repository;
+import org.antennae.server.notifier.entities.AppInfo;
+import org.antennae.server.notifier.repository.IAppInfoDao;
+import org.antennae.server.notifier.service.internal.IAppInfoService;
+import org.springframework.stereotype.Service;
 
-@Repository
-public class HbmDeviceInfoDaoImpl implements IDeviceInfoDao {
+@Service
+public class AppInfoServiceImpl implements IAppInfoService {
 	
 	@Inject
-	private SessionFactory sessionFactory;
+	private IAppInfoDao appInfoDao;
 
 	@Override
-	public void addDeviceInfo(DeviceInfo deviceInfo) {
-		sessionFactory.getCurrentSession().saveOrUpdate(deviceInfo);
+	public void addAppInfo(AppInfo appInfo) {
+		if( appInfo != null ){
+			appInfoDao.addAppInfo(appInfo);
+		}
 	}
 
 	@Override
-	public DeviceInfo getDeviceInfo(int id) {
+	public AppInfo getAppInfo(int id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void updateDeviceInfo(DeviceInfo deviceInfo) {
+	public void updateAppInfo(AppInfo appInfo) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void deleteDeviceInfo(int id) {
+	public void deleteAppInfo(int id) {
 		// TODO Auto-generated method stub
 
 	}

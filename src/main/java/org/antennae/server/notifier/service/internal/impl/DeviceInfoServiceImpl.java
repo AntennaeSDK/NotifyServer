@@ -14,24 +14,29 @@
  * limitations under the License.
  */
 
-package org.antennae.server.notifier.repository.impl;
+package org.antennae.server.notifier.service.internal.impl;
 
 import javax.inject.Inject;
 
 import org.antennae.server.notifier.entities.DeviceInfo;
 import org.antennae.server.notifier.repository.IDeviceInfoDao;
-import org.hibernate.SessionFactory;
-import org.springframework.stereotype.Repository;
+import org.antennae.server.notifier.service.internal.IDeviceInfoService;
+import org.springframework.stereotype.Service;
 
-@Repository
-public class HbmDeviceInfoDaoImpl implements IDeviceInfoDao {
-	
+@Service
+public class DeviceInfoServiceImpl implements IDeviceInfoService {
+
 	@Inject
-	private SessionFactory sessionFactory;
-
+	private IDeviceInfoDao deviceInfoDao;
+	
 	@Override
 	public void addDeviceInfo(DeviceInfo deviceInfo) {
-		sessionFactory.getCurrentSession().saveOrUpdate(deviceInfo);
+		
+		if( deviceInfo != null ){
+			deviceInfoDao.addDeviceInfo(deviceInfo);
+		}else{
+			throw new NullPointerException("DeviceInfo cannot be null");
+		}
 	}
 
 	@Override
