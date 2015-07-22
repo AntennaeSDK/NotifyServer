@@ -34,6 +34,9 @@ public class AppInfo {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
 	
+	@Column(name="DEVICE_ID")
+	private int deviceId;
+	
 	@Column(name="GCM_REGID")
 	private String gcmRegistrationId;
 
@@ -59,6 +62,12 @@ public class AppInfo {
 	}
 	public void setId(int id) {
 		this.id = id;
+	}
+	public int getDeviceId() {
+		return deviceId;
+	}
+	public void setDeviceId(int deviceId) {
+		this.deviceId = deviceId;
 	}
 	public String getGcmRegistrationId() {
 		return gcmRegistrationId;

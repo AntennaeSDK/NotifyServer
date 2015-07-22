@@ -63,6 +63,12 @@ public class DeviceInfo {
     private String networkOperatorName;
     
     
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 	public String getDeviceId() {
 		return deviceId;
 	}

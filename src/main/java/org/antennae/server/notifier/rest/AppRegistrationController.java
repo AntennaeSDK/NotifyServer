@@ -16,6 +16,10 @@
 
 package org.antennae.server.notifier.rest;
 
+import javax.inject.Inject;
+
+import org.antennae.server.notifier.service.external.IRegistrationService;
+import org.antennae.transport.AppDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,12 +28,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class AppRegistrationController {
+	
+	@Inject
+	private IRegistrationService registrationSvc;
 
 	@RequestMapping(value="/api/registration", method=RequestMethod.POST)
 	@ResponseBody
 	public void register( @RequestBody String json){
 		System.out.println("JSON : " + json );
 		
+		AppDetails appDetails = AppDetails.fromJson(json);
+		
+		registrationSvc.register(appDetails);
 	}
 	
 	@RequestMapping(value="/api/registration", method=RequestMethod.GET)

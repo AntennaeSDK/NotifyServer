@@ -23,16 +23,16 @@ import com.google.gson.Gson;
 
 public class AppDetails {
 
-	private String gcmRegistrationId;
+	//private String gcmRegistrationId;
     private DeviceInfo deviceInfo;
     private AppInfo appInfo;
     
-	public String getGcmRegistrationId() {
-		return gcmRegistrationId;
-	}
-	public void setGcmRegistrationId(String gcmRegistrationId) {
-		this.gcmRegistrationId = gcmRegistrationId;
-	}
+//	public String getGcmRegistrationId() {
+//		return gcmRegistrationId;
+//	}
+//	public void setGcmRegistrationId(String gcmRegistrationId) {
+//		this.gcmRegistrationId = gcmRegistrationId;
+//	}
 	public DeviceInfo getDeviceInfo() {
 		return deviceInfo;
 	}
