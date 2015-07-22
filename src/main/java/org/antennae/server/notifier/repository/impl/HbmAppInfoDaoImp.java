@@ -16,6 +16,8 @@
 
 package org.antennae.server.notifier.repository.impl;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.antennae.server.notifier.entities.AppInfo;
@@ -52,6 +54,11 @@ public class HbmAppInfoDaoImp implements IAppInfoDao {
 	public void deleteAppInfo(int id) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public List<AppInfo> getAllInfos() {
+		return (List<AppInfo>) sessionFactory.getCurrentSession().createQuery("from AppInfo").list();
 	}
 
 }

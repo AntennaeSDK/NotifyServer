@@ -16,6 +16,8 @@
 
 package org.antennae.server.notifier.service.external.impl;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.antennae.server.notifier.service.external.IRegistrationService;
@@ -54,6 +56,12 @@ public class RegistrationServiceImpl implements IRegistrationService {
 		appDetails.getAppInfo().setDeviceId(deviceId);
 		
 		appInfoSvc.addAppInfo( appDetails.getAppInfo()); 
+	}
+
+	@Override
+	public List<AppDetails> getAllRegistrations() {
+		
+		return null;
 	}
 
 }

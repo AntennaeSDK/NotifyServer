@@ -46,6 +46,8 @@ public class AppRegistrationController {
 	@ResponseBody
 	public String get(){
 		System.out.println("Received the GET Api call");
+		
+		
 		return "Received : ";
 	}
 }

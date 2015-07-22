@@ -16,6 +16,8 @@
 
 package org.antennae.server.notifier.service.internal.impl;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.antennae.server.notifier.entities.AppInfo;
@@ -52,6 +54,12 @@ public class AppInfoServiceImpl implements IAppInfoService {
 	public void deleteAppInfo(int id) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public List<AppInfo> getAllAppInfos() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

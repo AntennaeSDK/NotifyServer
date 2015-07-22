@@ -16,6 +16,8 @@
 
 package org.antennae.server.notifier.repository.impl;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.antennae.server.notifier.entities.DeviceInfo;
@@ -52,6 +54,11 @@ public class HbmDeviceInfoDaoImpl implements IDeviceInfoDao {
 	public void deleteDeviceInfo(int id) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public List<DeviceInfo> getAllDeviceInfo() {
+		return (List<DeviceInfo>) sessionFactory.getCurrentSession().createQuery("from DeviceInfo").list();
 	}
 
 }

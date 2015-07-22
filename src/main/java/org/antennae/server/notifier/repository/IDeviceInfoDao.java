@@ -16,6 +16,8 @@
 
 package org.antennae.server.notifier.repository;
 
+import java.util.List;
+
 import org.antennae.server.notifier.entities.DeviceInfo;
 
 public interface IDeviceInfoDao {
@@ -25,4 +27,6 @@ public interface IDeviceInfoDao {
 	public void updateDeviceInfo( DeviceInfo deviceInfo );
 	public void deleteDeviceInfo( int id);
 	
+	
+	public List<DeviceInfo> getAllDeviceInfo();
 }

@@ -16,9 +16,13 @@
 
 package org.antennae.server.notifier.service.external;
 
+import java.util.List;
+
 import org.antennae.transport.AppDetails;
 
 public interface IRegistrationService {
 
 	public void register( AppDetails appDetails );
+	
+	public List<AppDetails> getAllRegistrations();
 }

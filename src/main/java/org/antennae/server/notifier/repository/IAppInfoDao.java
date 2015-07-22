@@ -16,6 +16,8 @@
 
 package org.antennae.server.notifier.repository;
 
+import java.util.List;
+
 import org.antennae.server.notifier.entities.AppInfo;
 
 public interface IAppInfoDao {
@@ -24,5 +26,7 @@ public interface IAppInfoDao {
 	public AppInfo getAppInfo( int id);
 	public void updateAppInfo( AppInfo appInfo );
 	public void deleteAppInfo( int id );
+	
+	public List<AppInfo> getAllInfos();
 	
 }
