@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.antennae.config;
+package org.antennae.server.notifier.config;
 
 import javax.sql.DataSource;
 
