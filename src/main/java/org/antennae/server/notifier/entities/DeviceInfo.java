@@ -17,14 +17,18 @@
 package org.antennae.server.notifier.entities;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import org.antennae.transport.PhoneTypeEnum;
 
 import com.google.gson.Gson;
 
+@Entity
+@Table(name="DEVICE_INFO")
 public class DeviceInfo {
 
 	@Id

@@ -31,4 +31,7 @@ public class NotifierDashboardApplicationTests {
 	public void contextLoads() {
 	}
 
+	/*
+	 {"appInfo":{"appId":"org.antennae.gcmtests.gcmtest","gcmRegistrationId":"APA91bHBvSwUi8zgoJidZSHXl5GX8j5MUHzFKWatTfjolW7GcEiJgTa0FrULlX2O4HReOhBXVS9F215Q9xhLwXYo2vfZrdNHYfWLPwOSWM9r8UkpxBFyrNvg0eZSG534wOrPqb778jXnb3uIX-Gelk9jtQ90kphtdQ","appVersion":1,"firstInstallTime":1437543423952,"lastUpdateTime":1437543423952},"deviceInfo":{"deviceId":"000000000000000","networkCountryIso":"","networkOperatorId":"","networkOperatorName":""}}
+	 */
 }

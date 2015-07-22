@@ -20,16 +20,21 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.antennae.server.notifier.entities.AppInfo;
+import org.antennae.server.notifier.entities.DeviceInfo;
 import org.antennae.server.notifier.entities.User;
+import org.antennae.transport.AppDetails;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @Configuration
+@EnableTransactionManagement
 public class ApplicationConfig {
 
 	@Bean(name = "viewResolver")
@@ -52,7 +57,11 @@ public class ApplicationConfig {
     public SessionFactory getSessionFactory(DataSource dataSource) {
     	LocalSessionFactoryBuilder sessionBuilder = new LocalSessionFactoryBuilder(dataSource);
     	sessionBuilder.addProperties(getHibernateProperties());
+    	
     	sessionBuilder.addAnnotatedClasses(User.class);
+    	sessionBuilder.addAnnotatedClass(DeviceInfo.class);
+    	sessionBuilder.addAnnotatedClass(AppInfo.class);
+    	
     	return sessionBuilder.buildSessionFactory();
     }
     

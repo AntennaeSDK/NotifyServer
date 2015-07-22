@@ -22,6 +22,7 @@ import org.antennae.server.notifier.entities.DeviceInfo;
 import org.antennae.server.notifier.repository.IDeviceInfoDao;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class HbmDeviceInfoDaoImpl implements IDeviceInfoDao {
@@ -30,6 +31,7 @@ public class HbmDeviceInfoDaoImpl implements IDeviceInfoDao {
 	private SessionFactory sessionFactory;
 
 	@Override
+	@Transactional
 	public void addDeviceInfo(DeviceInfo deviceInfo) {
 		sessionFactory.getCurrentSession().saveOrUpdate(deviceInfo);
 	}
