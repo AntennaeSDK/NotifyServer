@@ -16,6 +16,8 @@
 
 package org.antennae.server.notifier.service.internal.impl;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.antennae.server.notifier.entities.DeviceInfo;
@@ -55,6 +57,11 @@ public class DeviceInfoServiceImpl implements IDeviceInfoService {
 	public void deleteDeviceInfo(int id) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public List<DeviceInfo> getDeviceInfos(List<Integer> deviceIds) {
+		return deviceInfoDao.getDeviceInfos(deviceIds);
 	}
 
 }

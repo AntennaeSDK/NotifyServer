@@ -27,6 +27,6 @@ public interface IAppInfoDao {
 	public void updateAppInfo( AppInfo appInfo );
 	public void deleteAppInfo( int id );
 	
-	public List<AppInfo> getAllInfos();
+	public List<AppInfo> getAllAppInfos();
 	
 }

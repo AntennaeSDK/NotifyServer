@@ -16,10 +16,13 @@
 
 package org.antennae.server.notifier.service.external.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.antennae.server.notifier.entities.AppInfo;
+import org.antennae.server.notifier.entities.DeviceInfo;
 import org.antennae.server.notifier.service.external.IRegistrationService;
 import org.antennae.server.notifier.service.internal.IAppInfoService;
 import org.antennae.server.notifier.service.internal.IDeviceInfoService;
@@ -61,7 +64,33 @@ public class RegistrationServiceImpl implements IRegistrationService {
 	@Override
 	public List<AppDetails> getAllRegistrations() {
 		
-		return null;
+		List<AppInfo> allApps = appInfoSvc.getAllAppInfos();
+		
+		List<Integer> deviceIds = new ArrayList<Integer>();
+		for( AppInfo appinfo : allApps){
+			deviceIds.add(appinfo.getDeviceId());
+		}
+		
+		List<DeviceInfo> deviceInfos = deviceInfoSvc.getDeviceInfos(deviceIds);
+		
+		// create the final list
+		List<AppDetails> appDetails = new ArrayList<AppDetails>();
+		
+		for( AppInfo appinfo : allApps ){
+			
+			AppDetails app = new AppDetails();
+			app.setAppInfo(appinfo);
+			
+			for( DeviceInfo device : deviceInfos ){
+				if( device.getId() == appinfo.getDeviceId() ){
+					app.setDeviceInfo(device);
+					break;
+				}
+			}
+			
+			appDetails.add(app);
+		}
+		
+		return appDetails;
 	}
-
 }

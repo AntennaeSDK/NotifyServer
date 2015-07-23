@@ -58,8 +58,7 @@ public class AppInfoServiceImpl implements IAppInfoService {
 
 	@Override
 	public List<AppInfo> getAllAppInfos() {
-		// TODO Auto-generated method stub
-		return null;
+		return appInfoDao.getAllAppInfos();
 	}
 
 }

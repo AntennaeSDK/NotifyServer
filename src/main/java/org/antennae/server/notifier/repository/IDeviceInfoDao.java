@@ -26,7 +26,7 @@ public interface IDeviceInfoDao {
 	public DeviceInfo getDeviceInfo( int id);
 	public void updateDeviceInfo( DeviceInfo deviceInfo );
 	public void deleteDeviceInfo( int id);
-	
-	
+		
 	public List<DeviceInfo> getAllDeviceInfo();
+	public List<DeviceInfo> getDeviceInfos( List<Integer> deviceIds );
 }

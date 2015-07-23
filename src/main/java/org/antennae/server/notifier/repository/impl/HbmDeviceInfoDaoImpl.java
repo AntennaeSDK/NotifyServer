@@ -22,6 +22,7 @@ import javax.inject.Inject;
 
 import org.antennae.server.notifier.entities.DeviceInfo;
 import org.antennae.server.notifier.repository.IDeviceInfoDao;
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,4 +62,13 @@ public class HbmDeviceInfoDaoImpl implements IDeviceInfoDao {
 		return (List<DeviceInfo>) sessionFactory.getCurrentSession().createQuery("from DeviceInfo").list();
 	}
 
+	@Override
+	@Transactional
+	public List<DeviceInfo> getDeviceInfos(List<Integer> deviceIds) {
+
+		Query selectQuery = sessionFactory.getCurrentSession().createQuery("from DeviceInfo where id in ( :ids ) ");
+		selectQuery.setParameterList("ids", deviceIds);
+		
+		return selectQuery.list();
+	}
 }

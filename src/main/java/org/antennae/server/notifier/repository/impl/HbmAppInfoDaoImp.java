@@ -57,7 +57,8 @@ public class HbmAppInfoDaoImp implements IAppInfoDao {
 	}
 
 	@Override
-	public List<AppInfo> getAllInfos() {
+	@Transactional
+	public List<AppInfo> getAllAppInfos() {
 		return (List<AppInfo>) sessionFactory.getCurrentSession().createQuery("from AppInfo").list();
 	}
 

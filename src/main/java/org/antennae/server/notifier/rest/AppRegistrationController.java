@@ -16,6 +16,9 @@
 
 package org.antennae.server.notifier.rest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.antennae.server.notifier.service.external.IRegistrationService;
@@ -42,12 +45,17 @@ public class AppRegistrationController {
 		registrationSvc.register(appDetails);
 	}
 	
+	/**
+	 * Displays all the registerations
+	 * @return
+	 */
 	@RequestMapping(value="/api/registration", method=RequestMethod.GET)
 	@ResponseBody
-	public String get(){
+	public List<AppDetails> get(){
+		
+		List<AppDetails> appDetails = new ArrayList<AppDetails>();
 		System.out.println("Received the GET Api call");
 		
-		
-		return "Received : ";
+		return registrationSvc.getAllRegistrations();
 	}
 }
