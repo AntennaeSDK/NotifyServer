@@ -167,6 +167,7 @@ public class GcmXmppClient {
         Long timeToLive = 10000L;
         
         String jsonMessage = createJsonMessage(registrationId, messageId, payload, collapseKey, timeToLive, true);
+        logger.info("Json Message " + jsonMessage);
         
         if( !connectionDraining ){
         	try {
@@ -182,7 +183,9 @@ public class GcmXmppClient {
      */
     protected void send(String jsonRequest) throws NotConnectedException {
         Stanza request = new GcmPacketExtension(jsonRequest).toPacket();
+        logger.info("sending a message through GCM");
         connection.sendStanza(request);
+        logger.info("sent a message through GCM");
     }
     
 	/**
