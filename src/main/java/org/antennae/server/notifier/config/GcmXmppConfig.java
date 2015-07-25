@@ -16,77 +16,28 @@
 
 package org.antennae.server.notifier.config;
 
-import java.io.IOException;
-
-import javax.net.ssl.SSLSocketFactory;
-
-import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.roster.Roster;
-import org.jivesoftware.smack.tcp.XMPPTCPConnection;
-import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.antennae.server.notifier.gcm.xmpp.GcmXmppClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class GcmXmppConfig {
-
+	
 	@Bean
-	public XMPPTCPConnection getGcmConnection() {
-
-		String GCM_SERVER = "gcm.googleapis.com";
-		int GCM_PORT = 5235;
+	public GcmXmppClient getGcmConnection() {
 
 		// username = GCM_PROJECT_ID + @gcm.googleapis.com
-		final String userName = "549760952886" + "@gcm.googleapis.com";
+		final String user = "549760952886" + "@gcm.googleapis.com";
 
 		// password = GCM_SERVER_KEY
 		final String password = "AIzaSyCsjVuDvWlm6ZGeB52LVYXeRXTwxyjFzWs";
+		
+		// Gcm Project Number
+		final String projectId = "549760952886";
 
-		XMPPTCPConnectionConfiguration.Builder configBuilder = XMPPTCPConnectionConfiguration.builder();
-
-		XMPPTCPConnectionConfiguration config = XMPPTCPConnectionConfiguration.builder()
-														.setServiceName(GCM_SERVER)
-														.setHost(GCM_SERVER)
-														.setCompressionEnabled(false)
-														.setPort(GCM_PORT)
-														.setConnectTimeout(30000)
-														.setSecurityMode(SecurityMode.disabled)
-														.setSendPresence(false)
-														.setSocketFactory(SSLSocketFactory.getDefault())
-														.build();
-
-		XMPPTCPConnection connection = new XMPPTCPConnection(config);
-
-		// disable Roster as I don't think this is supported by GCM
-		Roster roster = Roster.getInstanceFor(connection);
-		roster.setRosterLoadedAtLogin(false);
-
-		// logger.info("Connecting...");
-		try {
-			connection.connect();
-		} catch (SmackException | IOException | XMPPException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		// connection.addConnectionListener(new LoggingConnectionListener());
-
-		// Handle incoming packets
-		// connection.addAsyncStanzaListener(new MyStanzaListener() , new
-		// MyStanzaFilter() );
-
-		// Log all outgoing packets
-		// connection.addPacketInterceptor(new MyStanzaInterceptor(), new
-		// MyStanzaFilter() );
-
-		try {
-			connection.login(userName, password);
-		} catch (XMPPException | SmackException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return connection;
+		GcmXmppClient client = new GcmXmppClient(user, password, projectId);
+		client.connect();
+		
+		return client;
 	}
 }
