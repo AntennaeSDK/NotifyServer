@@ -23,7 +23,6 @@ import javax.sql.DataSource;
 import org.antennae.server.notifier.entities.AppInfo;
 import org.antennae.server.notifier.entities.DeviceInfo;
 import org.antennae.server.notifier.entities.User;
-import org.antennae.transport.AppDetails;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
