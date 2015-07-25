@@ -17,20 +17,26 @@
 package org.antennae.server.notifier.gcm.xmpp;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import javax.net.ssl.SSLSocketFactory;
 
 import org.apache.log4j.Logger;
 import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.DefaultExtensionElement;
 import org.jivesoftware.smack.packet.ExtensionElement;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.provider.ExtensionElementProvider;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.json.simple.JSONValue;
 import org.xmlpull.v1.XmlPullParser;
 
 
@@ -48,6 +54,15 @@ public class GcmXmppClient {
 	private String gcmUser;
 	private String gcmPassword;
 	private String gcmProjectId;
+	
+	
+	private XMPPTCPConnection connection; 
+	/**
+     * Indicates whether the connection is in draining state, which means that it
+     * will not accept any new downstream messages.
+     */
+    protected volatile boolean connectionDraining = false;
+	
 	
 	public GcmXmppClient( String user, String password, String projectId  ){
 		this( GCM_PROD_HOST, GCM_PROD_PORT, user, password, projectId);
@@ -103,7 +118,7 @@ public class GcmXmppClient {
 														.setSocketFactory(SSLSocketFactory.getDefault())
 														.build();
 
-		XMPPTCPConnection connection = new XMPPTCPConnection(config);
+		connection = new XMPPTCPConnection(config);
 
 		// disable Roster as I don't think this is supported by GCM
 		Roster roster = Roster.getInstanceFor(connection);
@@ -131,4 +146,80 @@ public class GcmXmppClient {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+     * Returns a random message id to uniquely identify a message.
+     *
+     * TODO: use the database to generate a truly unique randomeId and persist in the DB.
+     */
+    public String generateMessageId() {
+        return "m-" + UUID.randomUUID().toString();
+    }
+
+	public void sendDownstreamMessage( String message, String registrationId){
+		
+		String messageId = generateMessageId();
+		
+		Map<String, String> payload = new HashMap<String, String>();
+		payload.put("data", message);
+		
+		String collapseKey = "sample";
+        Long timeToLive = 10000L;
+        
+        String jsonMessage = createJsonMessage(registrationId, messageId, payload, collapseKey, timeToLive, true);
+        
+        if( !connectionDraining ){
+        	try {
+				send(jsonMessage);
+			} catch (NotConnectedException e) {
+				e.printStackTrace();
+			}
+        }
+	}
+	
+	 /**
+     * Sends a packet with contents provided.
+     */
+    protected void send(String jsonRequest) throws NotConnectedException {
+        Stanza request = new GcmPacketExtension(jsonRequest).toPacket();
+        connection.sendStanza(request);
+    }
+    
+	/**
+     * Creates a JSON encoded GCM message.
+     *
+     * @param to RegistrationId of the target device (Required).
+     * @param messageId Unique messageId for which CCS sends an "ack/nack" (Required).
+     * @param payload Message content intended for the application. (Optional).
+     * @param collapseKey GCM collapse_key parameter (Optional).
+     * @param timeToLive GCM time_to_live parameter (Optional).
+     * @param delayWhileIdle GCM delay_while_idle parameter (Optional).
+     * @return JSON encoded GCM message.
+     */
+    public static String createJsonMessage(String to, 
+    										String messageId,
+            								Map<String, String> payload, 
+            								String collapseKey, 
+            								Long timeToLive,
+            								Boolean delayWhileIdle) {
+    	
+        Map<String, Object> message = new HashMap<String, Object>();
+        
+        message.put("to", to);
+        
+        if (collapseKey != null) {
+            message.put("collapse_key", collapseKey);
+        }
+        if (timeToLive != null) {
+            message.put("time_to_live", timeToLive);
+        }
+        if (delayWhileIdle != null && delayWhileIdle) {
+            message.put("delay_while_idle", true);
+        }
+        
+        message.put("message_id", messageId);
+        message.put("data", payload);
+        
+        return JSONValue.toJSONString(message);
+    }
 }
