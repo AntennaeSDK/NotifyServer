@@ -35,6 +35,25 @@ public class AppRegistrationController {
 	@Inject
 	private IRegistrationService registrationSvc;
 
+	/**
+	 * The payload will look something similar
+	 * {
+		    "appInfo": {
+		        "appId": "org.antennae.gcmtests.gcmtest",
+		        "gcmRegistrationId": "gcm-registrationId-Gelk9jtQ90kphtdQ",
+		        "appVersion": 1,
+		        "firstInstallTime": 1437629332302,
+		        "lastUpdateTime": 1437629332302
+		    },
+		    "deviceInfo": {
+		        "deviceId": "000000000000000",
+		        "networkCountryIso": "",
+		        "networkOperatorId": "",
+		        "networkOperatorName": ""
+		    }
+		}
+	 * @param json
+	 */
 	@RequestMapping(value="/api/registration", method=RequestMethod.POST)
 	@ResponseBody
 	public void register( @RequestBody String json){
