@@ -18,8 +18,11 @@ package org.antennae.server.notifier.config;
 
 import javax.sql.DataSource;
 
+import org.antennae.server.notifier.db.NotifierConnectionProperties;
+import org.antennae.server.notifier.db.H2.H2SimpleDriverDatasourceFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
@@ -30,9 +33,30 @@ public class H2Config {
 	@Bean
 	public DataSource getDatasource(){
 		
+		String dbUrl = "jdbc:h2:file:~/.notifier/notify.db";
+		String dbUser = "sa";
+		String dbPassword = "";
+				
+		H2SimpleDriverDatasourceFactory dataSourceFactory = new H2SimpleDriverDatasourceFactory();
+		
+		NotifierConnectionProperties connectionProperties = new NotifierConnectionProperties();
+		connectionProperties.setUrl( dbUrl);
+		connectionProperties.setDriverClass(org.h2.Driver.class);
+		connectionProperties.setUsername( dbUser);
+		connectionProperties.setPassword(dbPassword);
+		
+		org.h2.Driver driver = new org.h2.Driver();
+		SimpleDriverDataSource datasource = new SimpleDriverDataSource( driver, dbUrl, dbUser, dbPassword );
+		
+		dataSourceFactory.setConnectionProperties(connectionProperties);
+		dataSourceFactory.setDataSource(datasource);
+		
+		
 		EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
 		
 		builder.setType(EmbeddedDatabaseType.H2);
+		//builder.setName("notifier.db");
+		builder.setDataSourceFactory( dataSourceFactory);
 		builder.addScript("/db/h2/create-db.sql");
 		builder.addScript("/db/h2/insert-data.sql");
 		

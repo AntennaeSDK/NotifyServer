@@ -24,6 +24,7 @@ import org.antennae.server.notifier.gcm.xmpp.GcmXmppClient;
 import org.antennae.server.notifier.service.external.IRegistrationService;
 import org.antennae.transport.AppDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -39,7 +40,7 @@ public class BroadcastMessageController {
 	
 	@RequestMapping(value="/api/messages", method=RequestMethod.POST)
 	@ResponseBody
-	public String sendMessage( String message){
+	public String sendMessage( @RequestBody  String message){
 		
 		// first get the list of registered devices for this app.
 		List<AppDetails> appDetails = registrationService.getAllRegistrations();
