@@ -16,6 +16,8 @@
 
 package org.antennae.server.notifier.config;
 
+import java.io.File;
+
 import javax.sql.DataSource;
 
 import org.antennae.server.notifier.db.NotifierConnectionProperties;
@@ -33,7 +35,8 @@ public class H2Config {
 	@Bean
 	public DataSource getDatasource(){
 		
-		String dbUrl = "jdbc:h2:file:~/.notifier/notify.db";
+		String dbName = "notifier";
+		String dbUrl = "jdbc:h2:file:~/.notifier/" + dbName ;
 		String dbUser = "sa";
 		String dbPassword = "";
 				
@@ -51,14 +54,24 @@ public class H2Config {
 		dataSourceFactory.setConnectionProperties(connectionProperties);
 		dataSourceFactory.setDataSource(datasource);
 		
+		// check whether the DB is already created.
+		String dbPath = System.getProperty("user.home");
+		File dbFile = new File( dbPath + File.separator + ".notifier" + File.separator + dbName + ".mv.db");
+		
+		boolean isDbCreated = false;
+		if( dbFile.exists() == true && dbFile.isFile() ==true ){
+			isDbCreated = true;
+		}
 		
 		EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
 		
 		builder.setType(EmbeddedDatabaseType.H2);
 		//builder.setName("notifier.db");
 		builder.setDataSourceFactory( dataSourceFactory);
-		builder.addScript("/db/h2/create-db.sql");
-		builder.addScript("/db/h2/insert-data.sql");
+		if( isDbCreated == false ){
+			builder.addScript("/db/h2/create-db.sql");
+			builder.addScript("/db/h2/insert-data.sql");
+		}
 		
 		EmbeddedDatabase database = builder.build();
 		
