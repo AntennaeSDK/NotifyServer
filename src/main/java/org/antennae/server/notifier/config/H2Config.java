@@ -66,7 +66,6 @@ public class H2Config {
 		EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
 		
 		builder.setType(EmbeddedDatabaseType.H2);
-		//builder.setName("notifier.db");
 		builder.setDataSourceFactory( dataSourceFactory);
 		if( isDbCreated == false ){
 			builder.addScript("/db/h2/create-db.sql");

@@ -20,16 +20,19 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.servlet.http.HttpUtils;
+import javax.inject.Inject;
 
+import org.antennae.server.notifier.gcm.xmpp.GcmXmppClient;
 import org.antennae.server.notifier.rest.RestClient;
+import org.antennae.server.notifier.service.external.IRegistrationService;
+import org.antennae.transport.AppDetails;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.logging.LogLevel;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +45,13 @@ import com.google.gson.Gson;
 public class NotifierDashboardController {
 	
 	Logger logger = LoggerFactory.getLogger(NotifierDashboardController.class);
+	
+	@Inject
+	private GcmXmppClient gcmClient;
+	
+	@Inject
+	private IRegistrationService registrationService;
+
 
 	@RequestMapping("/notifier")
 	public String notifierPage(){
@@ -80,7 +90,17 @@ public class NotifierDashboardController {
 		
 	}
 	
+	/**
+	 * Send downstream messages ( GCM, Parse )
+	 * @param alert
+	 * @throws Exception
+	 */
 	public void sendNotification( Alert alert ) throws Exception{
+		//sendParseMessage( alert );
+		sendGcmMessage( alert );
+	}
+	
+	private void sendParseMessage( Alert alert ) throws Exception{
 		
 		RestClient client = new RestClient("https://api.parse.com");
 		client.addDefaultRestHeaders();
@@ -114,6 +134,19 @@ public class NotifierDashboardController {
 				throw new Exception("Parse push failed");
 			}
 		}
+	}
+	
+	private void sendGcmMessage( Alert alert  ){
+		
+		// first get the list of registered devices for this app.
+		List<AppDetails> appDetails = registrationService.getAllRegistrations();
+		
+		// send the message
+		for( AppDetails app : appDetails ){
+			String gcmRegistrationId = app.getAppInfo().getGcmRegistrationId();
+			gcmClient.sendDownstreamMessage( alert.toJson() , gcmRegistrationId);
+		}
+
 	}
 	
 	public static enum AlertSeverityEnum{

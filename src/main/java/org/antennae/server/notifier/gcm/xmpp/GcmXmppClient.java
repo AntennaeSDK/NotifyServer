@@ -80,7 +80,6 @@ public class GcmXmppClient {
 			throw new NullPointerException("Gcm ProjectId cannot be null or empty");
 		}
 		
-		
 		if( host == null || host.trim().equals("")){
 			throw new NullPointerException("host cannot be null");
 		}
