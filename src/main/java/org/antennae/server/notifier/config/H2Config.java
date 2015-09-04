@@ -18,10 +18,9 @@ package org.antennae.server.notifier.config;
 
 import java.io.File;
 
-import javax.sql.DataSource;
-
 import org.antennae.server.notifier.db.NotifierConnectionProperties;
 import org.antennae.server.notifier.db.H2.H2SimpleDriverDatasourceFactory;
+import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -31,15 +30,31 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 @Configuration
 public class H2Config {
+	
+	private static final Logger logger = Logger.getLogger( H2Config.class);
 
 	@Bean
-	public DataSource getDatasource(){
+	public EmbeddedDatabase getDatasource(){
 		
 		String dbName = "notifier";
-		String dbUrl = "jdbc:h2:file:~/.notifier/" + dbName ;
 		String dbUser = "sa";
 		String dbPassword = "";
+		String dbUrl = "jdbc:h2:file:~/.notifier/" + dbName + ";AUTO_SERVER=TRUE;DB_CLOSE_ON_EXIT=FALSE;AUTO_SERVER_PORT=9090";
 				
+		// check whether the DB is already created.
+		String dbPath = System.getProperty("user.home");
+		File dbFile = new File( dbPath + File.separator + ".notifier" + File.separator + dbName + ".mv.db");
+
+		boolean isDbCreated = false;
+		if( dbFile.exists() == true && dbFile.isFile() ==true ){
+			isDbCreated = true;
+		}
+		
+		// create new DB only if it doesn't exist
+		if( isDbCreated == true ){
+			dbUrl = dbUrl + ";IFEXISTS=TRUE";
+		}
+		
 		H2SimpleDriverDatasourceFactory dataSourceFactory = new H2SimpleDriverDatasourceFactory();
 		
 		NotifierConnectionProperties connectionProperties = new NotifierConnectionProperties();
@@ -54,26 +69,26 @@ public class H2Config {
 		dataSourceFactory.setConnectionProperties(connectionProperties);
 		dataSourceFactory.setDataSource(datasource);
 		
-		// check whether the DB is already created.
-		String dbPath = System.getProperty("user.home");
-		File dbFile = new File( dbPath + File.separator + ".notifier" + File.separator + dbName + ".mv.db");
-		
-		boolean isDbCreated = false;
-		if( dbFile.exists() == true && dbFile.isFile() ==true ){
-			isDbCreated = true;
-		}
 		
 		EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
 		
 		builder.setType(EmbeddedDatabaseType.H2);
 		builder.setDataSourceFactory( dataSourceFactory);
+		builder.setName(dbName);
+		
+		// the current conf always recreates the DB, so create tables during startup
+		
 		if( isDbCreated == false ){
-			builder.addScript("/db/h2/create-db.sql");
-			builder.addScript("/db/h2/insert-data.sql");
+			logger.info("Creating the database");
+//			builder.addScript("/db/h2/create-db.sql");
+//			builder.addScript("/db/h2/insert-data.sql");
+		}else{
+			logger.info("Database found");
 		}
 		
 		EmbeddedDatabase database = builder.build();
 		
 		return database;
 	}
+	
 }

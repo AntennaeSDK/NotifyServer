@@ -1,0 +1,137 @@
+<html>
+<head>
+	
+	<!--  include polyfill -->
+	<script src="/js/bower_components/webcomponentsjs/webcomponents.js"></script>
+	<link rel="import" href="/js/bower_components/core-elements/core-elements.html"></link>
+	<link rel="import" href="/js/bower_components/paper-elements/paper-elements.html"></link>
+	<link rel="import" href="/elements/add-incident.html"></link>
+	
+	<style>
+	
+    body {
+      font-family: 'Roboto 2', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      margin: 0;
+      background: #f6f6f6;
+    }
+
+    .green {
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 150px;
+      background: #70c26f;
+    }
+
+    .light_grey {
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 150px;
+      background: #e0e0e0;
+    }
+    
+    h2{
+    	top : 100px;
+    	text-align: center;
+    	color: #7e7e7e;
+    	font-size: 3em;
+    }
+    
+    core-header-panel {
+	  height: 100%;
+	  overflow: auto;
+	  -webkit-overflow-scrolling: touch;
+	}
+	core-toolbar {
+	  background: #03a9f4;
+	  color: white;
+	}
+	#tabs {
+	  width: 100%;
+	  margin: 0;
+	  -webkit-user-select: none;
+	  -moz-user-select: none;
+	  -ms-user-select: none;
+	  user-select: none;
+	  text-transform: uppercase;
+	}
+	
+  .container {
+    width: 80%;
+    margin: 50px auto;
+    	-webkit-columns: 300px 2;
+   		-moz-columns: 300px 2;
+     	columns: 300px 2;
+  }
+  
+  
+  
+  @media (min-width: 481px) {
+    #tabs {
+      width: 1000px;
+    }
+    .container {
+      width: 80%;
+    }
+  }
+  
+  incident-card {
+  	margin: 10px;
+  }
+  
+  paper-fab {
+  		float: right;
+  		margin: 20px;
+  }
+    
+  </style>
+</head>
+ 
+<body fullbleed vertical layout unresolved>
+
+	<!--  
+	<div class="light_grey">
+		<H2>NOTIFY CONTROL CENTER</H2>
+	</div>
+	 -->
+
+
+	<div>
+	
+		
+  		<!--  if user is logged in show the incidents, otherwise show login/register screens -->
+  		<core-header-panel>
+
+  			<core-toolbar>
+  				<paper-tabs id="tabs" selected="all" self-end>
+  					<paper-tab name="all">All Incidents</paper-tab>
+    				<paper-tab name="active-incidents">Active Incidents</paper-tab>
+    				<paper-tab name="active-rooms">Active Rooms</paper-tab>
+    				<paper-tab name="closed-incidents">Closed Incidents</paper-tab>
+  				</paper-tabs>
+  			</core-toolbar>
+
+			<!-- main page content will go here -->
+			 <div class="container" layout vertical center>
+			 
+				<add-incident class="incident">
+	  			</add-incident>
+	  				  			
+	  		</div>
+	  		
+		</core-header-panel>
+	</div>
+	
+	<script>
+	  var tabs = document.querySelector('paper-tabs');
+	
+	  tabs.addEventListener('core-select', function() {
+	    console.log("Selected: " + tabs.selected);
+	  });
+	  
+	  
+	</script>
+</body>

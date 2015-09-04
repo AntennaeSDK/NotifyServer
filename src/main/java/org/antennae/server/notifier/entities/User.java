@@ -23,6 +23,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.google.gson.Gson;
+
 @Entity
 @Table(name="USER")
 public class User {
@@ -35,8 +37,25 @@ public class User {
 	@Column(name="name")
 	private String name;
 
+	// userId is not unique.
+	// we can have any number of "same" userIds
+	// but, only one can be active at a time
+	@Column(name="user_id")
+	private String userId;
+	
+	@Column(name="password")
+	private String password;
+	
 	@Column(name="email")
 	private String email;
+	
+	@Column(name="phone")
+	private String phone;
+	
+	@Column(name="status")
+	private UserStatusEnum status;
+
+	
 	
 	public int getId() {
 		return id;
@@ -50,11 +69,45 @@ public class User {
 	public void setName(String name) {
 		this.name = name;
 	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
 	public String getEmail() {
 		return email;
 	}
 	public void setEmail(String email) {
 		this.email = email;
 	}
+    public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+	public UserStatusEnum getStatus() {
+		return status;
+	}
+	public void setStatus(UserStatusEnum status) {
+		this.status = status;
+	}	
 	
+	
+	
+	public String toJson(){
+        Gson gson = new Gson();
+        return gson.toJson( this);
+    }
+    public static User fromJson( String json ){
+        Gson gson = new Gson();
+        return gson.fromJson(json, User.class);
+    }
 }

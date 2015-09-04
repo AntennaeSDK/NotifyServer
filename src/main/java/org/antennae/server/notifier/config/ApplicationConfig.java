@@ -21,12 +21,17 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.antennae.server.notifier.entities.AppInfo;
+import org.antennae.server.notifier.entities.AuthToken;
+import org.antennae.server.notifier.entities.Channel;
+import org.antennae.server.notifier.entities.ChannelClient;
 import org.antennae.server.notifier.entities.DeviceInfo;
+import org.antennae.server.notifier.entities.Message;
 import org.antennae.server.notifier.entities.User;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -34,8 +39,9 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @Configuration
 @EnableTransactionManagement
+@Import( {H2Config.class, GcmXmppConfig.class} )
 public class ApplicationConfig {
-
+	
 	@Bean(name = "viewResolver")
     public InternalResourceViewResolver getViewResolver() {
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
@@ -60,6 +66,10 @@ public class ApplicationConfig {
     	sessionBuilder.addAnnotatedClasses(User.class);
     	sessionBuilder.addAnnotatedClass(DeviceInfo.class);
     	sessionBuilder.addAnnotatedClass(AppInfo.class);
+    	sessionBuilder.addAnnotatedClass(AuthToken.class);
+    	sessionBuilder.addAnnotatedClass(Channel.class);
+    	sessionBuilder.addAnnotatedClass(Message.class);
+    	sessionBuilder.addAnnotatedClass(ChannelClient.class);
     	
     	return sessionBuilder.buildSessionFactory();
     }
@@ -70,6 +80,5 @@ public class ApplicationConfig {
 		
 		HibernateTransactionManager transactionManager = new HibernateTransactionManager(sessionFactory);
 		return transactionManager;
-	}
-    
+	}	
 }

@@ -1,0 +1,122 @@
+<link rel="import" href="/js/bower_components/polymer/polymer.html" ></link>
+<link rel="import" href="/js/bower_components/paper-elements/paper-elements.html"></link>
+<link rel="import" href="/js/bower_components/paper-input/paper-input-password.html"></link>
+
+<polymer-element name="add-incident" >
+ 
+  	<template>
+    	<style>
+    		
+			:host {
+			      display: block;
+			      position: relative;
+			      background-color: white;
+			      padding: 20px;
+			      width: 100%;
+			      font-size: 1.2rem;
+			      font-weight: 300;
+			    }
+			    
+			 .card-header {
+			      margin: 20px;
+			  	  padding: 20px;
+			 }
+			     	
+			polyfill-next-selector { 
+				content: '.card-header h2'; 
+			}
+			
+			.card-header ::content h2 {
+			  margin: 0;
+			  font-size: 1.8rem;
+			  font-weight: 300;
+			}
+			
+			polyfill-next-selector { 
+				content: '.card-header img'; 
+			}
+			
+			.card-header ::content img {
+			  width: 70px;
+			  border-radius: 50%;
+			}
+			
+			#create_btn {
+      			background: green;
+    			color: yellow;
+      		}
+      		
+      		#summary {
+      			size : 250px;
+      		}
+      		
+      		#form-container {
+      			width : 100%;
+      		}
+			
+		</style>
+	
+	
+      
+      <div id="form-container" >
+	      <paper-input label="Name:" value="{{incident.name}}"></paper-input>
+	      <br>
+	      <paper-input id="summary" label="Summary:" value="{{incident.summary}}"></paper-input>
+	      <br>
+			<paper-radio-group selected="high">
+  				<paper-radio-button name="severe" label="Severe"></paper-radio-button>
+  				<paper-radio-button name="high" label="High"></paper-radio-button>
+  				<paper-radio-button name="elevated" label="Elevated"></paper-radio-button>
+  				<paper-radio-button name="underwatch" label="Under Watch"></paper-radio-button>
+  				<paper-radio-button name="normal" label="Normal"></paper-radio-button>
+			</paper-radio-group>
+			<br><br>
+			<div flex>Launch Conference Call &nbsp;&nbsp;&nbsp;&nbsp; <paper-toggle-button checked></paper-toggle-button></div>
+			<br>
+	     
+	      
+	      <div class="centered">
+	        <paper-button on-tap="{{doSend}}" raisedButton id="create_btn" label="Create Incident">Create Incident</paper-button>
+	      </div>
+	      
+      </div>
+    
+    
+    <core-ajax id="incidentEndPoint" 
+    			method="POST"
+    			handleAs="json" 
+    			url="/api/incidents" 
+    			body = "{ 'name' : '{{incident.name}}', 'summary': '{{incident.summary}}', 'priority' : '{{incident.priority}}', 'createdBy' : '{{incident.createdBy}}' }" 
+    			response="{{response}}"
+    			on-core-error="{{resourceError}}"
+    			on-core-complete="{{onComplete}}">
+    </core-ajax>
+    
+	<content></content>
+	</template>
+	
+	<script>
+	Polymer('add-incident', {
+	      created: function() {
+	        this.incident = {};
+	      },
+	      doSend: function() {
+	    	this.incident.priority = 2;
+	    	var createdBy = window.sessionStorage.getItem('user');
+	    	this.incident.createdBy = createdBy;
+	    	var json = JSON.stringify(this.incident);
+	    	console.log( "data sent to add incident  : " +json);
+			this.$.incidentEndPoint.go( json);
+			//this.$.errorToast.show();
+	      },
+	      resourceError: function(){
+	  		this.$.errorToast.text = "Resource error";
+	  		this.$.errorToast.show();
+	  	  },
+	      onComplete: function(){
+	    	  document.location.href = "/home.html";
+	      }
+	    });
+	</script>
+	
+</polymer-element>

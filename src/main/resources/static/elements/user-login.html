@@ -1,0 +1,119 @@
+<link rel="import" href="/js/bower_components/polymer/polymer.html" ></link>
+<link rel="import" href="/js/bower_components/paper-elements/paper-elements.html"></link>
+<link rel="import" href="/js/bower_components/paper-input/paper-input-password.html"></link>
+<polymer-element name="user-login" >
+ 
+  <template>
+    <style>
+      paper-input {
+        color:#000000;
+        text-align:left;
+      }
+      paper-button.colored {
+        background:#000000;
+        color:#ffffff;
+      }
+      .centered {
+        display:block;
+        /*text-align:center;*/
+        width:100%;
+      }
+      
+      #register_btn {
+      	background: green;
+    	color: yellow;
+      }
+      
+    </style>
+    
+    <form id="userlogin_form">
+      
+      <paper-input label="Username:" value="{{user.name}}"></paper-input>
+      <br>
+      <paper-input-password label="Password:" value="{{user.password}}" ></paper-input-password>
+      </br>      
+      
+      <div class="centered">
+        <paper-button on-tap="{{doSend}}" raisedButton id="register_btn" label="Login">Login</paper-button>
+      </div>
+    </form>
+    
+    <core-ajax id="loginEndPoint" 
+    			method="POST"
+    			handleAs="json" 
+    			url="/api/authentication" 
+    			body = "{ 'userId' : '{{user.name}}', 'password': '{{user.password}}' }"; 
+    			response="{{response}}"
+    			on-core-error="{{onError}}"
+    			on-core-response="{{onSuccess}}"
+    			on-core-complete="{{onComplete}}">
+    </core-ajax>
+    
+ 
+    
+    <paper-toast id="toast" text="Error!"></paper-toast>
+    <template repeat="{{response}}">{{data}}</template>
+    
+    
+  </template>
+  
+  <script>
+    Polymer('user-login', {
+      created: function() {
+        this.user = {};
+      },
+      doSend: function() {
+    	var json = JSON.stringify(this.user);
+    	console.log("data sent to login :" + json);
+		this.$.loginEndPoint.go( json);
+		//this.$.errorToast.show();
+      },
+      onError: function(){
+  		this.$.toast.text = "Login Failed";
+  		this.$.toast.show();
+  	  },
+  	  onSuccess: function( event ){
+			var result = event.detail.response;
+			
+			console.log( JSON.stringify( result) );
+			
+			if( result.success == true ){
+				this.$.toast.text = result.message;
+	   	  		this.$.toast.show();
+	   	  		document.cookie = "token=" + result.token + ";expires=" + result.expiryDate + ";userId=" + result.userId;
+	   	  		window.sessionStorage.setItem('user', result.userId);
+	   	  		window.sessionStorage.setItem('token', result.token);
+	   	  		
+	   	  		// this is pointless, because the browser loads a new page
+	   	  		//this.$.userEndPoint.go();
+	   	  		
+				document.location.href = "/home.html";
+				var user = JSON.parse(window.sessionStorage.getItem('user'));
+			}else{
+				this.$.toast.text = result.message;
+	   	  		this.$.toast.show();
+			}
+  	  },
+      onComplete: function(){
+      },
+      onUserError: function(event){
+      },
+      onUserSuccess : function( event ){
+    	  
+      },
+      onUserComplete: function(){
+      }
+    });
+    
+    // not used. the UUID is generated on the server side
+    function generateUUID() {
+        var d = new Date().getTime();
+        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = (d + Math.random()*16)%16 | 0;
+            d = Math.floor(d/16);
+            return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+        });
+        return uuid;
+    };
+  </script>
+</polymer-element>

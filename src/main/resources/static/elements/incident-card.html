@@ -1,0 +1,78 @@
+<link rel="import" href="/js/bower_components/polymer/polymer.html" ></link>
+<link rel="import" href="/js/bower_components/paper-elements/paper-elements.html"></link>
+<link rel="import" href="/js/bower_components/paper-input/paper-input-password.html"></link>
+
+<polymer-element name="incident-card" attributes="incident_detail_url incident_id">
+ 
+  	<template id="incident-template">
+    	<style>
+    		
+			:host {
+			      display: block;
+			      position: relative;
+			      background-color: white;
+			      padding: 20px;
+			      width: 100%;
+			      font-size: 1.2rem;
+			      font-weight: 300;
+			    }
+			    
+			 .card-header {
+			      margin: 20px;
+			  	  padding: 20px;
+			 }
+			     	
+			polyfill-next-selector { 
+				content: '.card-header h2'; 
+			}
+			
+			.card-header ::content h2 {
+			  margin: 0;
+			  font-size: 1.8rem;
+			  font-weight: 300;
+			}
+			
+			polyfill-next-selector { 
+				content: '.card-header img'; 
+			}
+			
+			.card-header ::content img {
+			  width: 70px;
+			  border-radius: 50%;
+			}
+			
+		</style>
+	
+	<div id="incident_container" on-click="{{clicked}}">
+		<div  class="card-header" layout horizontal center >
+			 
+			<content select="img"></content>
+			<content select="h2"></content>
+			
+			 <!-- 
+				<img width="70" height="70" src="/images/avatar-03.svg">
+				<H1>{{inc.name}}</H1>
+				<div>{{inc.summary}}</div>
+				<div>{{inc.createdBy}}</div>
+			 -->
+		</div>
+		<content></content>
+	</div>
+		
+	</template>
+	
+	<script>
+		Polymer('incident-card',{
+			incident_detail_url : "",
+			incident_id : "",
+			created : function(){
+			},
+			clicked: function(){
+				var url = this.incident_detail_url + "?id=" + this.incident_id;
+				console.log("incident clicked, incident-detail url : " + url );
+				document.location.href = url;
+			}
+		}); 
+	</script>
+	
+</polymer-element>

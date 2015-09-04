@@ -13,17 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.antennae.server.notifier;
 
-import org.antennae.server.notifier.config.H2Config;
+import org.antennae.server.notifier.config.ApplicationConfig;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
-@Import(H2Config.class)
-public class NotifierDashboardApplication {
+@EnableAutoConfiguration
+@Import(ApplicationConfig.class)
+public class NotifierDashboardApplication extends SpringBootServletInitializer{
 
     public static void main(String[] args) {
         SpringApplication.run( NotifierDashboardApplication.class, args);

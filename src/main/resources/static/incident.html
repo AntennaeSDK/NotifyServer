@@ -1,0 +1,112 @@
+<html>
+<head>
+
+	<!--  include polyfill -->
+	<script src="/js/bower_components/webcomponentsjs/webcomponents.js"></script>
+	<link rel="import" href="/js/bower_components/core-elements/core-elements.html"></link>
+	<link rel="import" href="/js/bower_components/paper-elements/paper-elements.html"></link>
+	<link rel="import" href="/elements/incident-activity.html"></link>
+
+	<style>
+
+    body {
+      font-family: 'Roboto 2', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      margin: 0;
+      background: #f6f6f6;
+    }
+
+    .green {
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 150px;
+      background: #70c26f;
+    }
+
+    .light_grey {
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 150px;
+      background: #e0e0e0;
+    }
+
+    h2{
+    	top : 100px;
+    	text-align: center;
+    	color: #7e7e7e;
+    	font-size: 3em;
+    }
+
+    core-header-panel {
+	  height: 100%;
+	  overflow: auto;
+	  -webkit-overflow-scrolling: touch;
+	}
+	core-toolbar {
+	  background: #03a9f4;
+	  color: white;
+	}
+
+
+  .xcontainer {
+    width: 80%;
+    margin: 20px auto;
+
+  </style>
+</head>
+
+<body fullbleed vertical layout unresolved onload="loadIncident()">
+
+ 	<!--  if user is logged in show the incidents, otherwise show login/register screens -->
+
+  	<!-- main page content will go here -->
+
+	<div class="xcontainer" id="incident_container">
+		<!--
+		  	<incident-activity>
+	 	  	</incident-activity>
+	 	  	 -->
+ 	</div>
+
+	<script>
+	  // get the query parameter and pass
+	  var QueryString = function () {
+		// This function is anonymous, is executed immediately and
+  		// the return value is assigned to QueryString!
+  		var query_string = {};
+		var query = window.location.search.substring(1);
+		var vars = query.split("&");
+		for (var i=0;i<vars.length;i++) {
+			var pair = vars[i].split("=");
+			// If first entry with this name
+			if (typeof query_string[pair[0]] === "undefined") {
+				query_string[pair[0]] = decodeURIComponent(pair[1]);
+			// If second entry with this name
+    		} else if (typeof query_string[pair[0]] === "string") {
+      			var arr = [ query_string[pair[0]],decodeURIComponent(pair[1]) ];
+      			query_string[pair[0]] = arr;
+        		// If third or later entry with this name
+    		} else {
+      			query_string[pair[0]].push(decodeURIComponent(pair[1]));
+    		}
+  		}
+    	return query_string;
+	}();
+
+	function loadIncident(){
+		console.log("Query String : " + JSON.stringify(QueryString) );
+
+		var x = document.querySelector("#incident_container");
+		var incident = document.createElement("incident-activity");
+		var attr = document.createAttribute("incident_id");
+		attr.value = QueryString.id;
+		incident.setAttributeNode( attr );
+
+		x.appendChild(incident);
+	}
+
+	</script>
+</body>

@@ -1,0 +1,83 @@
+<link rel="import" href="/js/bower_components/polymer/polymer.html" ></link>
+<link rel="import" href="/js/bower_components/paper-elements/paper-elements.html"></link>
+<link rel="import" href="/js/bower_components/paper-input/paper-input-password.html"></link>
+
+
+<polymer-element name="user-registration" >
+ 
+  <template>
+    <style>
+      paper-input {
+        color:#000000;
+        text-align:left;
+      }
+      paper-button.colored {
+        background:#000000;
+        color:#ffffff;
+      }
+      .centered {
+        display:block;
+        /*text-align:center;*/
+        width:100%;
+      }
+      
+      #register_btn {
+      	background: green;
+    	color: yellow;
+      }
+      
+    </style>
+    
+    <form id="userregistration_form">
+ <!-- <paper-input floatingLabel label="Username:" value="{{user.name}}"></paper-input>-->
+      
+      <paper-input label="Username:" value="{{user.name}}"></paper-input>
+      <br>
+      <paper-input-password label="Password:" value="{{user.password}}" ></paper-input-password>
+      </br>      
+      <paper-input label="Phone:" value="{{user.phone}}"></paper-input>
+      <br>
+      <paper-input label="Email:" value="{{user.email}}"></paper-input>
+      <br>
+      
+      <div class="centered">
+        <paper-button on-tap="{{doSend}}" raisedButton id="register_btn" label="Register">Register</paper-button>
+      </div>
+    </form>
+    
+    <core-ajax id="userEndPoint" 
+    			method="POST"
+    			handleAs="json" 
+    			url="/api/users" 
+    			body = "{ 'userId' : '{{user.name}}', 'password': '{{user.password}}' , 'phone': '{{user.phone}}' , 'email': '{{user.email}}' }"; 
+    			response="{{response}}"
+    			on-core-error="{{resourceError}}"
+    			on-core-complete="{{onComplete}}">
+    </core-ajax>
+    
+    <paper-toast id="errorToast" text="Error!"></paper-toast>
+    <template repeat="{{response}}">{{data}}</template>
+    
+  </template>
+  
+  <script>
+    Polymer('user-registration', {
+      created: function() {
+        this.user = {};
+      },
+      doSend: function() {
+    	var json = JSON.stringify(this.user);
+    	console.log("sending data to user-registration: " + json);
+		this.$.userEndPoint.go( json);
+		//this.$.errorToast.show();
+      },
+      resourceError: function(){
+  		this.$.errorToast.text = "Resource error";
+  		this.$.errorToast.show();
+  	  },
+      onComplete: function(){
+    	  document.location.href = "/login.html";
+      }
+    });
+  </script>
+</polymer-element>

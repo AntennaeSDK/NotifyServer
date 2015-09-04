@@ -1,0 +1,354 @@
+<link rel="import" href="/js/bower_components/polymer/polymer.html"></link>
+<link rel="import" href="/js/bower_components/paper-elements/paper-elements.html"></link>
+<link rel="import" href="/elements/websocket-element.html"></link>
+
+<polymer-element name="incident-activity" attributes="incident_id">
+<template id="incident-template">
+<style>
+:host {
+	display: block;
+	position: relative;
+	padding: 20px;
+	width: 100%;
+	font-size: 1.2rem;
+	font-weight: 300;
+}
+
+
+.container {
+	width: 90%;
+	margin: 20px auto;
+}
+
+#top_container {
+	height: 290px;
+	overflow: hidden;
+	clear: both
+}
+
+#top_left{
+	width : 63%;
+	float: left;
+	padding: 20px;
+	height : 100%;
+	background-color: white;
+}
+
+#top_right {
+	width: 25%;
+	float: right;
+	margin-left: 1em;
+	height : 100%;
+	padding: 20px;
+	background-color: white;
+}
+
+#bottom_container {
+	min-height: 500px;
+	margin-top: 20px;
+	/*
+	background-color:#eaeaea; */
+}
+
+#action_icons {
+	background-color: white;
+	padding-left: 20px;
+	padding-right: 20px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+#conversation_container {
+	margin-top: 20px;
+	background-color: white;
+	padding: 20px;
+}
+
+#message_send_container {
+	margin-top: 5px;
+	background-color: white;
+	padding-left: 20px;
+	padding-right: 20px;
+	padding-top: 10px;
+	padding-bottom: 5px;
+}
+#message_text {
+        color:#000000;
+        text-align:left;
+        width: 77%;
+}
+
+#message_btn {
+	width : 20%;
+	float: right;
+	background: green;
+    color: yellow;
+}
+
+  paper-fab {
+      color: #fff;
+      margin-right:2em;
+    }
+
+    paper-fab.blue {
+      background: #5677fc;
+    }
+
+    paper-fab.green {
+      background: #259b24;
+    }
+
+    paper-fab.yellow {
+      background: #ffeb3b;
+    }
+
+.listless li{
+	list-style-type: none;
+}
+</style>
+
+<div class="container">
+
+	<div id="top_container">
+		<div id="top_left">
+			<div>
+				<p><B>{{name}}</B></p>
+				<p>{{summary}}
+				</p>
+				<p><span style="background-color: #FFFF00">Bridge Number: 1-877-645-6456 x3764</span> </p>
+			</div>
+			<div id="action_icons">
+			<paper-fab mini icon="add"></paper-fab>
+			<paper-fab mini icon="cloud" style="color: blue;"></paper-fab>
+			<paper-fab mini icon="create" class="blue" title="create"></paper-fab>
+			<paper-fab mini icon="done" class="green" title="done"></paper-fab>
+			<paper-fab mini icon="arrow-forward" title="arrow-forward"></paper-fab>
+		</div>
+		</div>
+
+		<div id="top_right">
+			<div style="display: inline">
+				<img style="display: inline" width="70" height="70" src="/images/avatar-02.svg">
+				<p style="display: inline"><B>{{user_name}}</B></p>
+			</div>
+			<ul class="listless">
+				<li>Started: Jul 23, 2015</li>
+				<li>People: 18 live</li>
+				<li>Priority: High</li>
+			</ul>
+		</div>
+	</div>
+
+	<div id="bottom_container">
+		<div id="conversation_container">
+				<ul class="listless">
+					<!-- 
+					<li><b>@test1</b> > &nbsp; hello</li>
+					<li><b>@test1</b> > &nbsp; hello</li>
+					 -->
+					<template id="messages_container" repeat="{{messages}}">
+						<li><b>{{senderName}}</b> > &nbsp; {{data}}</li>
+					</template>
+				</ul>
+		</div>
+		<div id="message_send_container">
+			<paper-input id="message_text" label="Type Your Message Here" value="{{message}}"></paper-input>
+			<paper-button id="message_btn" on-tap="{{doSend}}" raisedButton id="register_btn" label="Send">Send</paper-button>
+		</div>
+	</div>
+</div>
+
+<core-ajax id="incidentEndPoint"
+	method="GET"
+	handleAs="json"
+	url="/api/incidents/{{incident_id}}"
+	response="{{response}}"
+	on-core-error="{{onErrorIncident}}"
+	on-core-response="{{onSuccessIncident}}"
+	on-core-complete="{{onCompleteIncident}}">
+</core-ajax>
+
+<core-ajax id="userEndPoint"
+	method="GET"
+	handleAs="json"
+	url="/api/users/login/{{login_id}}"
+	response="{{response}}"
+	on-core-error="{{onErrorUser}}"
+	on-core-response="{{onSuccessUser}}"
+	on-core-complete="{{onCompleteUser}}">
+</core-ajax>
+
+<core-ajax id="messagesEndPoint"
+    method="GET"
+    handleAs="json"
+    url="/api/incidents/{{incident_id}}/messages"
+    response="{{messages}}"
+    on-core-error="{{onErrorMessages}}"
+    on-core-response="{{onSuccessMessages}}"
+    on-core-complete="{{onCompleteMessages}}">
+</core-ajax>
+
+</template>
+<script>
+	Polymer('incident-activity', {
+		incident_id : "",
+		name : "",
+		summary:"",
+		createdTime: "",
+		user_name : "Pascal Maria",
+		user_id : "",
+		login_id : "",
+		messages: {},
+		users : {},
+		chatWs : null,
+		created : function() {
+			console.log("element created: incident_id=" + this.incident_id);
+		},
+		attached : function(){
+			console.log("element attached: incident_id=" + this.incident_id);
+			
+			// make a call to backend to fetch the incident details
+			this.$.incidentEndPoint.go( this.incident_id);
+			
+			// make a call to retrieve all the messages
+			this.$.messagesEndPoint.go( this.incident_id);
+						
+			var hostport = document.location.host;
+			
+			// create a websocket connection
+			var websocket = new WebSocket("ws://" + hostport + "/ws");
+			this.chatWs = websocket;
+			
+			var incidentId = this.incident_id;
+			
+			// create callbacks for chat
+			websocket.onopen = function( event ){
+				console.log("WebSocket is created");
+				// send the userId and uuid to the server in the first message
+				var userId = window.sessionStorage.getItem('user');
+				var token = window.sessionStorage.getItem('token');
+				var firstmsg = { 'userId': userId, 'token': token, 
+								'incidentId': incidentId,'firstMessage':true, 
+								'clientType': 'WebSocket' };
+				
+				websocket.send( JSON.stringify(firstmsg) );
+			};
+			
+			// get a ref to "this" itself
+			var incident_widget = this;
+			
+			websocket.onmessage = function( event ){
+				console.log( "message arrived: " + event.data);
+
+				var messages = incident_widget.messages;
+				
+				var json = JSON.parse(event.data);
+				var userId = window.sessionStorage.getItem('user');
+				if( json.senderId != userId ){
+					//messagesR.push( json );
+					if( messages != null ){
+						messages.push(json);
+					}
+				}
+			};
+		},
+		ready : function(){
+			console.log("element ready: incident_id=" + this.incident_id);
+		},
+		
+		doSend : function(e){
+			console.log("e : "+ JSON.stringify(e) );
+			console.log("msg " + this.message );
+			
+			// sample message
+			/* {"id":8,"channelId":1,
+					"senderId":3,
+					"message":"test message 24",
+					"sentTime":null,
+					"parent":0,
+					"answerOf":0,
+					"userName":"Test User3",
+					"senderUserId":"test3",
+					"question":false}
+			*/
+			
+			var msg = this.message;
+			
+			// create a message
+			var loginId = window.sessionStorage.getItem('user');
+			var m = { 'channelId': this.incident_id, 
+						'senderId': loginId,
+						'senderName': this.user_name,
+						'data' : msg
+					};
+			
+			// send the message to messages containers\
+			this.messages.push( m );
+			
+			// send the message to the server through websocket
+			this.chatWs.send( JSON.stringify(m ) );
+			// reset the message
+			this.message = "";
+		},
+		
+		
+		// hanlde callbacks for "incident"
+		onErrorIncident : function( e ){
+			console.log("Get incident details failed" + JSON.stringify(e) );
+		},
+		onSuccessIncident : function(e){
+			var result = e.detail.response;
+			console.log( "Result" + JSON.stringify( result) );
+			
+			// populate the details of the incident
+			this.name = result.name;
+			this.summary = result.summary;
+			this.createdTime = result.createdTime;
+			this.user_id = result.createdBy;
+			
+			// fire another call to get the user details
+			this.login_id = window.sessionStorage.getItem('user');
+			this.$.userEndPoint.go();
+		},
+		onCompleteIncident : function(){
+		},
+		
+		// handle callbacks for "messages"
+		onErrorMessages : function(){
+		},
+		onSuccessMessages : function( e ){
+			// we are explicitly assigning the response to a local variable
+			var msgs = e.detail.response;
+			console.log("messages received: " + JSON.stringify(msgs) );
+			
+			//var template = this.$.messages_container;
+			//template.model = { "messages" : msgs };
+		},
+		onCompleteMessages : function(){
+		},
+		
+		//
+		// handle callbacks on "user"
+		//
+		onErrorUser : function( e ){
+		},
+		onSuccessUser : function( e ){
+			var user = e.detail.response;
+			console.log("User : " + JSON.stringify(user) );
+			
+			// set user name, image etc
+			this.user_name = user.name;
+		},
+		onCompleteUser : function( e ){
+		}
+		
+	});
+	/*id":1,"name":"DDoS Attack on the site",
+			"summary":"The Attack Started at 9am, manifested in the european cluster first",
+			"status":0,"type":0,"priority":0,
+			"createdTime":1438915885634,
+			"createdBy":"test1",
+			"tags":null,"users":null,"messages":null}
+	*/
+</script>
+</polymer-element>

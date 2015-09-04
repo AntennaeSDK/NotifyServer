@@ -1,0 +1,221 @@
+<html>
+<head>
+
+<!--  include polyfill -->
+<script src="/js/bower_components/webcomponentsjs/webcomponents.js"></script>
+<link rel="import"
+	href="/js/bower_components/core-elements/core-elements.html"></link>
+<link rel="import"
+	href="/js/bower_components/paper-elements/paper-elements.html"></link>
+<link rel="import" href="/elements/user-login.html"></link>
+<link rel="import" href="/elements/incident-card.html"></link>
+
+<style>
+body {
+	font-family: 'Roboto 2', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	margin: 0;
+	background: #f6f6f6;
+}
+
+.green {
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	height: 150px;
+	background: #70c26f;
+}
+
+.light_grey {
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	height: 150px;
+	background: #e0e0e0;
+}
+
+h2 {
+	top: 100px;
+	text-align: center;
+	color: #7e7e7e;
+	font-size: 3em;
+}
+
+core-header-panel {
+	height: 100%;
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+core-toolbar {
+	background: #03a9f4;
+	color: white;
+}
+
+#tabs {
+	width: 100%;
+	margin: 0;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	text-transform: uppercase;
+}
+
+.container {
+	width: 80%;
+	margin: 50px auto;
+	-webkit-columns: 300px 2;
+	-moz-columns: 300px 2;
+	columns: 300px 2;
+}
+
+@media ( min-width : 481px) {
+	#tabs {
+		width: 1000px;
+	}
+	.container {
+		width: 80%;
+	}
+}
+
+incident-card {
+	margin: 10px;
+}
+
+paper-fab {
+	float: right;
+	margin: 20px;
+}
+</style>
+</head>
+
+<body fullbleed vertical layout unresolved onload="loadIncidents()">
+
+
+	<div>
+
+
+		<!--  if user is logged in show the incidents, otherwise show login/register screens -->
+		<core-header-panel> 
+			<core-toolbar>
+			<paper-tabs id="tabs" selected="all" self-end> 
+				<paper-tab name="all">All Incidents</paper-tab> 
+				<paper-tab name="active-incidents">Active Incidents</paper-tab> 
+				<paper-tab name="active-rooms">Active Rooms</paper-tab> 
+				<paper-tab name="closed-incidents">Closed Incidents</paper-tab>
+				</paper-tabs>
+			</core-toolbar>
+			
+			<paper-fab id="addBtn" icon="add"></paper-fab> 
+			
+			<!-- main page content will go here -->	
+			<div class="container" id="card-container" layout vertical center>
+
+				<template id="incident-container" repeat="{{incidents}}">
+					<incident-card class="incident" incident_detail_url="incident.html" incident_id="{{id}}">
+						<img width="70" height="70"  src="/images/avatar-02.svg">
+						<h2>{{name}}</h2>
+						<p>{{summary}}</p>
+					</incident-card>
+				</template>
+
+			<!-- 
+			 	<incident-card class="incident">
+	    			<img width="70" height="70" src="/images/avatar-02.svg">
+	    			<h2>Sys Admin</h2>
+	    			<p>Fixing Linux Kernel</p>
+	  			</incident-card>
+	  			 -->
+
+		</div>
+
+		</core-header-panel>
+	</div>
+
+	<script>
+	  var tabs = document.querySelector('paper-tabs');
+	
+	  tabs.addEventListener('core-select', function() {
+	    console.log("Selected: " + tabs.selected);
+	  });
+	  
+	  var addBtn = document.getElementById("addBtn");
+	  addBtn.addEventListener("click", function(){
+		  console.log("addBtn clicked");
+		  document.location.href ="/addincident.html"
+	  });
+	  
+	  
+	  /*
+	  mock data for testing
+	  var t  = document.querySelector('#incident-container');
+	  t.model = { 'incidents' : [ 
+	                              {'name': 'Mock SysAdmin', 'summary':'jhjhdasd'}, 
+	                              {'name':'321312', 'summary':'sddwqdewd'}
+	                              ] 
+	  				};
+	                    
+	  console.log( JSON.stringify( t.model) );
+	  */
+	  
+	  var mocks = [ 
+                       {'name': 'SysAdmin', 'summary':'Fixing Linux Kernel'}, 
+                       {'name':'Ops Engineer', 'summary':'Issues in network'},
+                       {'name':'DB Admin', 'summary':'Mongo DB is Down'},
+                       ];
+	  
+	  function loadIncidents(){
+		  // retrieve the incidents
+		  var request = createRequest();
+		  
+		  // setup callback
+		  request.onreadystatechange = function(){
+			if( request.readyState != 4 ){
+				
+			}else if( request.status != 200 ){
+				// handle errors
+			}else{
+				// handle the result
+				var res = request.responseText;
+				var j = JSON.parse( res );
+				console.log( "response: " +  JSON.stringify( j) );
+				
+				//document.getElementById("card-container");	
+				
+				var t  = document.querySelector('#incident-container');
+				if( j !== null && j.length > 0 ){
+					t.model = { 'incidents' : j };
+				}else{
+					t.model = { 'incidents' : mocks }
+				}
+				
+				console.log( "model : " + JSON.stringify( t.model ) );
+			}
+		  };
+		  
+		  // send the request
+		  request.open("GET", "/api/incidents", true);
+		  request.send();
+	  }
+	  
+	  function createRequest() {
+		  var result = null;
+		  if (window.XMLHttpRequest) {
+		    // FireFox, Safari, etc.
+		    result = new XMLHttpRequest();
+		    if (typeof result.overrideMimeType != 'undefined') {
+		      result.overrideMimeType('text/xml'); // Or anything else
+		    }
+		  }else if (window.ActiveXObject) {
+		    // MSIE
+		    result = new ActiveXObject("Microsoft.XMLHTTP");
+		  } else {
+		    // No known mechanism -- consider aborting the application
+		  }
+		  return result;
+		}
+
+	</script>
+</body>

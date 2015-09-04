@@ -1,0 +1,65 @@
+<html>
+<head>
+	
+	<!--  include polyfill -->
+	<script src="/js/bower_components/webcomponentsjs/webcomponents.js"></script>
+	<link rel="import" href="/js/bower_components/core-elements/core-elements.html"></link>
+	<link rel="import" href="/js/bower_components/paper-elements/paper-elements.html"></link>
+	<link rel="import" href="/elements/user-registration.html"></link>
+	<link rel="import" href="/elements/greetings-display.html"></link>
+	
+	<style>
+    body {
+      font-family: 'Roboto 2', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      margin: 0;
+      background: #f6f6f6;
+    }
+
+    .green {
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 150px;
+      background: #70c26f;
+    }
+
+    .light_grey {
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 150px;
+      background: #e0e0e0;
+    }
+
+    
+    h2{
+    	top : 100px;
+    	text-align: center;
+    	color: #7e7e7e;
+    	font-size: 3em;
+    }
+    
+    .main{
+    	position: relative;
+    	top : 200px;
+    	left: 200px;
+    }
+    
+  </style>
+</head>
+<!-- 
+<body fullbleed vertical layout unresolved>
+ -->
+<body fullbleed vertical>
+ <div class="light_grey">
+  	<H2>NOTIFY CONTROL CENTER</H2>
+  </div>
+
+  <div class="main">
+  	
+  	<user-registration></user-registration>
+  	
+  </div>
+</body>

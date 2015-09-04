@@ -17,11 +17,11 @@
 package org.antennae.server.notifier.gcm.xmpp;
 
 import java.util.Map;
-import org.apache.log4j.Logger;
 
+import org.apache.log4j.Logger;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.StanzaListener;
-import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.EmptyResultIQ;
 import org.jivesoftware.smack.packet.Stanza;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
@@ -35,9 +35,16 @@ public class GcmStanzaListener implements StanzaListener {
 	public void processPacket(Stanza packet) throws NotConnectedException {
 		
 		logger.info("processing packet : " + packet );
+		//EmptyResultIQ incomingMessage = packet;
+		//Message incomingMessage = (Message) packet;
 		
-		Message incomingMessage = (Message) packet;
+		Stanza incomingMessage = ( Stanza) packet;
         GcmPacketExtension gcmPacket =(GcmPacketExtension) incomingMessage.getExtension(GcmXmppClient.GCM_NAMESPACE);
+        
+        if( gcmPacket == null ){
+            logger.info("incoming gcm  message is null. returning ");
+            return;
+        }
         
         String json = gcmPacket.getJson();
         
@@ -60,19 +67,22 @@ public class GcmStanzaListener implements StanzaListener {
                 // String from = (String) jsonObject.get("from");
                 //String ack = createJsonAck(from, messageId);
                 //send(ack);
+            	logger.info("Normal Upstream message : " + jsonObject);
                 
             } else if ("ack".equals(messageType.toString())) {
                   // Process Ack
                   // handleAckReceipt(jsonObject);
+            	logger.info("ACK message : " + jsonObject);
                   
             } else if ("nack".equals(messageType.toString())) {
                   // Process Nack
                   // handleNackReceipt(jsonObject);
+            	logger.info("NACK message : " + jsonObject);
                   
             } else if ("control".equals(messageType.toString())) {
                   // Process control message
                   // handleControlMessage(jsonObject);
-                  
+            		logger.info("NACK message : " + jsonObject);
             } else {
                   logger.warn("Unrecognized message type (%s) " + messageType.toString());
             }
