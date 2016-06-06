@@ -34,7 +34,9 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<!--
 			<scope>provided</scope>
+			-->
 		</dependency>		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -59,7 +61,18 @@
 		    <groupId>org.springframework.integration</groupId>
 		    <artifactId>spring-integration-websocket</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+        <dependency>
+            <groupId>javax.el</groupId>
+            <artifactId>el-api</artifactId>
+            <version>2.2.1-b04</version>
+        </dependency>
 
+         
 		<!-- 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -146,6 +159,8 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-remote-shell</artifactId>

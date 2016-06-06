@@ -18,6 +18,7 @@ package org.antennae.server.notifier.config;
 
 import java.util.Properties;
 
+import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 
 import org.antennae.server.notifier.entities.AppInfo;
@@ -27,19 +28,23 @@ import org.antennae.server.notifier.entities.ChannelClient;
 import org.antennae.server.notifier.entities.DeviceInfo;
 import org.antennae.server.notifier.entities.Message;
 import org.antennae.server.notifier.entities.User;
+import org.antennae.server.notifier.ws.WebSocketConfig;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
 @Configuration
 @EnableTransactionManagement
-@Import( {H2Config.class, GcmXmppConfig.class} )
+@Import( {H2Config.class, GcmXmppConfig.class, WebSocketConfig.class} )
 public class ApplicationConfig {
 	
 	@Bean(name = "viewResolver")
@@ -80,5 +85,17 @@ public class ApplicationConfig {
 		
 		HibernateTransactionManager transactionManager = new HibernateTransactionManager(sessionFactory);
 		return transactionManager;
-	}	
+	}
+	
+	@Bean
+    public ServletContextAware endpointExporterInitializer(final ApplicationContext applicationContext) {
+        return new ServletContextAware() {
+            @Override
+            public void setServletContext(ServletContext servletContext) {
+                ServerEndpointExporter exporter = new ServerEndpointExporter();
+                exporter.setApplicationContext(applicationContext);
+                exporter.afterPropertiesSet();
+            }
+        };
+    }
 }

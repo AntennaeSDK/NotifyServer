@@ -21,7 +21,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.StanzaListener;
-import org.jivesoftware.smack.packet.EmptyResultIQ;
 import org.jivesoftware.smack.packet.Stanza;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;

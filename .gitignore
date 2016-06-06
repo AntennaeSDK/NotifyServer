@@ -10,3 +10,4 @@ ebay.log
 MANIFEST.MF
 *.bash_profile
 *.DS_Store
+src/main/webapp/

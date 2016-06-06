@@ -86,6 +86,7 @@ public class WsServerEndPoint {
 	
 	@OnClose
 	public void close( Session session ){
+		logger.debug("session is closing: " + session.getId());
 		userSessions.remove(session);
 	}
 	
