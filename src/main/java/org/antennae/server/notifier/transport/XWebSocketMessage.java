@@ -21,6 +21,8 @@ import java.util.Date;
 import org.antennae.server.notifier.entities.ClientTypeEnum;
 
 import com.google.gson.Gson;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketMessage;
 
 public class XWebSocketMessage {
 	
@@ -128,4 +130,10 @@ public class XWebSocketMessage {
         Gson gson = new Gson();
         return gson.fromJson(json, XWebSocketMessage.class);
     }
+
+	public TextMessage toSpringTextWebSocketMessage(){
+		String json = toJson();
+		TextMessage textMessage = new TextMessage( json);
+		return textMessage;
+	}
 }
