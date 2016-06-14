@@ -51,6 +51,9 @@ public class SpringTextWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         logger.info("connection closed: " + session.getId() + ", status :" + status.toString());
+        if( userSessions.contains(session) ){
+            userSessions.remove(session);
+        }
     }
 
     @Override

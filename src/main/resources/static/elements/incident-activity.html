@@ -1,6 +1,6 @@
-<link rel="import" href="/js/bower_components/polymer/polymer.html"></link>
-<link rel="import" href="/js/bower_components/paper-elements/paper-elements.html"></link>
-<link rel="import" href="/elements/websocket-element.html"></link>
+<link rel="import" href="/js/bower_components/polymer/polymer.html"/>
+<link rel="import" href="/js/bower_components/paper-elements/paper-elements.html"/>
+<link rel="import" href="/elements/websocket-element.html"/>
 
 <polymer-element name="incident-activity" attributes="incident_id">
 <template id="incident-template">
@@ -311,10 +311,12 @@
 			this.$.userEndPoint.go();
 		},
 		onCompleteIncident : function(){
+			console.log("message completed");
 		},
 		
 		// handle callbacks for "messages"
-		onErrorMessages : function(){
+		onErrorMessages : function( e){
+			console.log("message error" + e);
 		},
 		onSuccessMessages : function( e ){
 			// we are explicitly assigning the response to a local variable
