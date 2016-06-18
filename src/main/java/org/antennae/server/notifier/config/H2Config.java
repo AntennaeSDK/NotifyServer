@@ -50,7 +50,8 @@ public class H2Config {
 		String dbName = "notifier";
 		String dbUser = "sa";
 		String dbPassword = "";
-		String dbUrl = "jdbc:h2:file:~/.notifier/" + dbName + ";AUTO_SERVER=TRUE;DB_CLOSE_ON_EXIT=FALSE;AUTO_SERVER_PORT=9090";
+		String dbFileUrl = "jdbc:h2:file:~/.notifier/" + dbName + ";AUTO_SERVER=TRUE;DB_CLOSE_ON_EXIT=FALSE;AUTO_SERVER_PORT=9090";
+		String dbMemUrl = "jdbc:h2:mem:" + dbName + ";AUTO_SERVER=TRUE;DB_CLOSE_ON_EXIT=FALSE;AUTO_SERVER_PORT=9090";
 				
 		// check whether the DB is already created.
 		String dbPath = System.getProperty("user.home");
@@ -63,19 +64,19 @@ public class H2Config {
 		
 		// create new DB only if it doesn't exist
 		if( isDbCreated == true ){
-			dbUrl = dbUrl + ";IFEXISTS=TRUE";
+			dbFileUrl = dbFileUrl + ";IFEXISTS=TRUE";
 		}
 		
 		H2SimpleDriverDatasourceFactory dataSourceFactory = new H2SimpleDriverDatasourceFactory();
 		
 		NotifierConnectionProperties connectionProperties = new NotifierConnectionProperties();
-		connectionProperties.setUrl( dbUrl);
+		connectionProperties.setUrl( dbFileUrl );
 		connectionProperties.setDriverClass(org.h2.Driver.class);
 		connectionProperties.setUsername( dbUser);
 		connectionProperties.setPassword(dbPassword);
 		
 		org.h2.Driver driver = new org.h2.Driver();
-		SimpleDriverDataSource datasource = new SimpleDriverDataSource( driver, dbUrl, dbUser, dbPassword );
+		SimpleDriverDataSource datasource = new SimpleDriverDataSource( driver, dbFileUrl, dbUser, dbPassword );
 		
 		dataSourceFactory.setConnectionProperties(connectionProperties);
 		dataSourceFactory.setDataSource(datasource);
@@ -111,13 +112,12 @@ public class H2Config {
 	public void generateH2Schema(SimpleDriverDataSource dataSource){
 		//create a minimal configuration
 		org.hibernate.cfg.Configuration cfg = new org.hibernate.cfg.Configuration();
-		cfg.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+		cfg.setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
 		cfg.setProperty("hibernate.hbm2ddl.auto", "create");
 
 		// create a temporary file to write the DDL
 		File ddlFile = null;
 		try {
-			//File currentDir = Paths.get(".").getFileName().toFile();
 			File dir = getDirectoryFromClasspath();
 			ddlFile = File.createTempFile("H2_", ".SQL", dir);
 			ddlFile.deleteOnExit();
@@ -133,30 +133,18 @@ public class H2Config {
 		cfg.buildMappings();
 		cfg.getProperties().setProperty(AvailableSettings.HBM2DDL_IMPORT_FILES, ddlFile.getName());
 
-//		<!-- Database connection settings -->
-//		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-//		<property name="hibernate.connection.url">jdbc:mysql://192.168.1.102:3306/javapapers</property>
-//		<property name="hibernate.connection.username">root</property>
-//		<property name="hibernate.connection.password">root</property>
 		cfg.getProperties().setProperty("hibernate.connection.driver_class", "org.h2.Driver");
 		cfg.getProperties().setProperty("hibernate.connection.url", dataSource.getUrl());
 		cfg.getProperties().setProperty("hibernate.connection.username", dataSource.getUsername());
 		cfg.getProperties().setProperty("hibernate.connection.password", dataSource.getPassword());
 
-		//configure Envers
-		//AuditConfiguration.getFor(cfg);
 
 		//execute the export
 		SchemaExport export = new SchemaExport(cfg);
 
-		//export.setOutputFile(fileName);
-
 		export.setDelimiter(";");
 		export.setFormat(true);
 		export.create(true, true);
-
-		//export.execute(true, false, false, true);
-
 	}
 
 	private File getDirectoryFromClasspath(){
