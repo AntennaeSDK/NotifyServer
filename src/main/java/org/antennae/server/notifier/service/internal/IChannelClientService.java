@@ -18,7 +18,7 @@ package org.antennae.server.notifier.service.internal;
 
 import java.util.List;
 
-import org.antennae.server.notifier.entities.ChannelClient;
+import org.antennae.common.entitybeans.ChannelClient;
 
 public interface IChannelClientService {
 

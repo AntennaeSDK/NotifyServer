@@ -16,7 +16,7 @@
 
 package org.antennae.server.notifier.service.internal;
 
-import org.antennae.server.notifier.entities.AuthToken;
+import org.antennae.common.entitybeans.AuthToken;
 
 public interface IAuthTokenService {
 	

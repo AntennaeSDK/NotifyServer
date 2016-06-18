@@ -21,7 +21,7 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
-import org.antennae.server.notifier.entities.AuthToken;
+import org.antennae.common.entitybeans.AuthToken;
 import org.antennae.server.notifier.service.external.IAuthenticationService;
 import org.antennae.server.notifier.service.internal.IAuthTokenService;
 import org.antennae.server.notifier.service.internal.IUserInternalService;

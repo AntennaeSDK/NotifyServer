@@ -20,7 +20,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.antennae.server.notifier.entities.AuthToken;
+import org.antennae.common.entitybeans.AuthToken;
 import org.antennae.server.notifier.repository.IAuthTokenDao;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;

@@ -17,16 +17,27 @@
 package org.antennae.server.notifier.config;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Properties;
 
 import org.antennae.server.notifier.db.NotifierConnectionProperties;
 import org.antennae.server.notifier.db.H2.H2SimpleDriverDatasourceFactory;
 import org.apache.log4j.Logger;
+import org.hibernate.cfg.AvailableSettings;
+import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+
+import static org.antennae.server.notifier.config.ApplicationConfig.entityClasses;
 
 @Configuration
 public class H2Config {
@@ -68,8 +79,13 @@ public class H2Config {
 		
 		dataSourceFactory.setConnectionProperties(connectionProperties);
 		dataSourceFactory.setDataSource(datasource);
-		
-		
+
+		try {
+			Connection h2connection = datasource.getConnection();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
 		EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
 		
 		builder.setType(EmbeddedDatabaseType.H2);
@@ -84,11 +100,81 @@ public class H2Config {
 //			builder.addScript("/db/h2/insert-data.sql");
 		}else{
 			logger.info("Database found");
+			generateH2Schema( datasource);
 		}
 		
 		EmbeddedDatabase database = builder.build();
 		
 		return database;
+	}
+
+	public void generateH2Schema(SimpleDriverDataSource dataSource){
+		//create a minimal configuration
+		org.hibernate.cfg.Configuration cfg = new org.hibernate.cfg.Configuration();
+		cfg.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+		cfg.setProperty("hibernate.hbm2ddl.auto", "create");
+
+		// create a temporary file to write the DDL
+		File ddlFile = null;
+		try {
+			//File currentDir = Paths.get(".").getFileName().toFile();
+			File dir = getDirectoryFromClasspath();
+			ddlFile = File.createTempFile("H2_", ".SQL", dir);
+			ddlFile.deleteOnExit();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		for(Class<?> c : entityClasses ){
+			cfg.addAnnotatedClass(c);
+		}
+
+		//build all the mappings, before calling the AuditConfiguration
+		cfg.buildMappings();
+		cfg.getProperties().setProperty(AvailableSettings.HBM2DDL_IMPORT_FILES, ddlFile.getName());
+
+//		<!-- Database connection settings -->
+//		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+//		<property name="hibernate.connection.url">jdbc:mysql://192.168.1.102:3306/javapapers</property>
+//		<property name="hibernate.connection.username">root</property>
+//		<property name="hibernate.connection.password">root</property>
+		cfg.getProperties().setProperty("hibernate.connection.driver_class", "org.h2.Driver");
+		cfg.getProperties().setProperty("hibernate.connection.url", dataSource.getUrl());
+		cfg.getProperties().setProperty("hibernate.connection.username", dataSource.getUsername());
+		cfg.getProperties().setProperty("hibernate.connection.password", dataSource.getPassword());
+
+		//configure Envers
+		//AuditConfiguration.getFor(cfg);
+
+		//execute the export
+		SchemaExport export = new SchemaExport(cfg);
+
+		//export.setOutputFile(fileName);
+
+		export.setDelimiter(";");
+		export.setFormat(true);
+		export.create(true, true);
+
+		//export.execute(true, false, false, true);
+
+	}
+
+	private File getDirectoryFromClasspath(){
+
+		File result=null;
+		ClassLoader cl = ClassLoader.getSystemClassLoader();
+		URL[] urls = ((URLClassLoader)cl).getURLs();
+
+		for( URL url : urls ){
+			File f = new File( url.getFile());
+
+			if(f.isDirectory() && f.canWrite() ){
+				result = f;
+				break;
+			}
+		}
+
+		return result;
 	}
 	
 }

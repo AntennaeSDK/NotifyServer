@@ -20,8 +20,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.antennae.server.notifier.entities.User;
-import org.antennae.server.notifier.entities.UserStatusEnum;
+import org.antennae.common.entitybeans.User;
+import org.antennae.common.beans.UserStatusEnum;
 import org.antennae.server.notifier.repository.IUserDao;
 import org.antennae.server.notifier.service.exception.UserIdAlreadyRegisteredException;
 import org.antennae.server.notifier.service.internal.IUserInternalService;

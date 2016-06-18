@@ -18,8 +18,8 @@ package org.antennae.server.notifier.service.external;
 
 import java.util.List;
 
-import org.antennae.server.notifier.entities.Channel;
-import org.antennae.server.notifier.entities.Message;
+import org.antennae.common.entitybeans.Channel;
+import org.antennae.common.entitybeans.Message;
 
 public interface IIncidentService {
 

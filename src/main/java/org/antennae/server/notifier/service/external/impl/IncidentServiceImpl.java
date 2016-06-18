@@ -20,9 +20,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.antennae.server.notifier.entities.Channel;
-import org.antennae.server.notifier.entities.ChannelTypeEnum;
-import org.antennae.server.notifier.entities.Message;
+import org.antennae.common.entitybeans.Channel;
+import org.antennae.common.beans.ChannelTypeEnum;
+import org.antennae.common.entitybeans.Message;
 import org.antennae.server.notifier.service.external.IIncidentService;
 import org.antennae.server.notifier.service.internal.IChannelService;
 import org.antennae.server.notifier.service.internal.IMessageService;

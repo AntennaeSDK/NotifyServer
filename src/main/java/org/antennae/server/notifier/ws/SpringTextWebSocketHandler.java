@@ -1,9 +1,9 @@
 package org.antennae.server.notifier.ws;
 
-import org.antennae.server.notifier.entities.ChannelClient;
-import org.antennae.server.notifier.entities.ClientStatusEnum;
-import org.antennae.server.notifier.entities.Message;
-import org.antennae.server.notifier.entities.User;
+import org.antennae.common.entitybeans.ChannelClient;
+import org.antennae.common.beans.ClientStatusEnum;
+import org.antennae.common.entitybeans.Message;
+import org.antennae.common.entitybeans.User;
 import org.antennae.server.notifier.service.external.IUserService;
 import org.antennae.server.notifier.service.internal.IChannelClientService;
 import org.antennae.server.notifier.service.internal.IMessageService;

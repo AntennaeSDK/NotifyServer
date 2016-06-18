@@ -20,7 +20,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.antennae.server.notifier.entities.AppInfo;
+import org.antennae.common.entitybeans.AppInfo;
 import org.antennae.server.notifier.repository.IAppInfoDao;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;

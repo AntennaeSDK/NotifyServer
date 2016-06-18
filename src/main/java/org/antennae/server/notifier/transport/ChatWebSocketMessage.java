@@ -18,9 +18,8 @@ package org.antennae.server.notifier.transport;
 
 import java.util.Date;
 
-import org.antennae.server.notifier.entities.ClientTypeEnum;
-
 import com.google.gson.Gson;
+import org.antennae.common.beans.ClientTypeEnum;
 import org.springframework.web.socket.TextMessage;
 
 public class ChatWebSocketMessage {
@@ -42,9 +41,24 @@ public class ChatWebSocketMessage {
 	private int parentMessageId;
 	private boolean isQuestion;
 	private int answerOf;
-	
-	
-	
+
+	// utility methods
+	public String toJson(){
+		Gson gson = new Gson();
+		return gson.toJson( this);
+	}
+	public static ChatWebSocketMessage fromJson(String json ){
+		Gson gson = new Gson();
+		return gson.fromJson(json, ChatWebSocketMessage.class);
+	}
+
+	public TextMessage toSpringTextWebSocketMessage(){
+		String json = toJson();
+		TextMessage textMessage = new TextMessage( json);
+		return textMessage;
+	}
+
+	// generated getters and setters
 	public int getMessageId() {
 		return messageId;
 	}
@@ -120,19 +134,5 @@ public class ChatWebSocketMessage {
 	}
 	
 	
-	// utility methods
-	public String toJson(){
-        Gson gson = new Gson();
-        return gson.toJson( this);
-    }
-    public static ChatWebSocketMessage fromJson(String json ){
-        Gson gson = new Gson();
-        return gson.fromJson(json, ChatWebSocketMessage.class);
-    }
 
-	public TextMessage toSpringTextWebSocketMessage(){
-		String json = toJson();
-		TextMessage textMessage = new TextMessage( json);
-		return textMessage;
-	}
 }

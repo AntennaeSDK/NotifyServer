@@ -21,15 +21,16 @@ import java.util.Properties;
 import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 
-import org.antennae.server.notifier.entities.AppInfo;
-import org.antennae.server.notifier.entities.AuthToken;
-import org.antennae.server.notifier.entities.Channel;
-import org.antennae.server.notifier.entities.ChannelClient;
-import org.antennae.server.notifier.entities.DeviceInfo;
-import org.antennae.server.notifier.entities.Message;
-import org.antennae.server.notifier.entities.User;
+import org.antennae.common.entitybeans.AppInfo;
+import org.antennae.common.entitybeans.AuthToken;
+import org.antennae.common.entitybeans.Channel;
+import org.antennae.common.entitybeans.ChannelClient;
+import org.antennae.common.entitybeans.DeviceInfo;
+import org.antennae.common.entitybeans.Message;
+import org.antennae.common.entitybeans.User;
 import org.antennae.server.notifier.ws.WebSocketConfig;
 import org.hibernate.SessionFactory;
+import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -37,6 +38,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -46,6 +50,8 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 @EnableTransactionManagement
 @Import( {H2Config.class, GcmXmppConfig.class, WebSocketConfig.class} )
 public class ApplicationConfig {
+
+    public static final Class[] entityClasses = { User.class, DeviceInfo.class, AppInfo.class, AuthToken.class,Channel.class, Message.class, ChannelClient.class };
 	
 	@Bean(name = "viewResolver")
     public InternalResourceViewResolver getViewResolver() {
@@ -59,6 +65,7 @@ public class ApplicationConfig {
     	Properties properties = new Properties();
     	properties.put("hibernate.show_sql", "true");
     	properties.put("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
+        properties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
     	return properties;
     }
     
@@ -68,17 +75,41 @@ public class ApplicationConfig {
     	LocalSessionFactoryBuilder sessionBuilder = new LocalSessionFactoryBuilder(dataSource);
     	sessionBuilder.addProperties(getHibernateProperties());
     	
-    	sessionBuilder.addAnnotatedClasses(User.class);
-    	sessionBuilder.addAnnotatedClass(DeviceInfo.class);
-    	sessionBuilder.addAnnotatedClass(AppInfo.class);
-    	sessionBuilder.addAnnotatedClass(AuthToken.class);
-    	sessionBuilder.addAnnotatedClass(Channel.class);
-    	sessionBuilder.addAnnotatedClass(Message.class);
-    	sessionBuilder.addAnnotatedClass(ChannelClient.class);
+//    	sessionBuilder.addAnnotatedClasses(User.class);
+//    	sessionBuilder.addAnnotatedClass(DeviceInfo.class);
+//    	sessionBuilder.addAnnotatedClass(AppInfo.class);
+//    	sessionBuilder.addAnnotatedClass(AuthToken.class);
+//    	sessionBuilder.addAnnotatedClass(Channel.class);
+//    	sessionBuilder.addAnnotatedClass(Message.class);
+//    	sessionBuilder.addAnnotatedClass(ChannelClient.class);
+
+        for( Class clz : entityClasses ){
+            sessionBuilder.addAnnotatedClass(clz);
+        }
     	
     	return sessionBuilder.buildSessionFactory();
     }
-    
+
+
+
+
+/*    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
+        LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+        em.setDataSource(dataSource);
+        //em.setPackagesToScan(new String[] { "packages.to.scan" });
+
+        JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        em.setJpaVendorAdapter(vendorAdapter);
+
+        Properties properties = new Properties();
+        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+        properties.setProperty("hibernate.hbm2ddl.auto", "update");
+        em.setJpaProperties(properties);
+
+        return em;
+    }*/
+
 	@Autowired
 	@Bean(name = "transactionManager")
 	public HibernateTransactionManager getTransactionManager( SessionFactory sessionFactory) {

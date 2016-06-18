@@ -18,9 +18,9 @@ package org.antennae.server.notifier.repository;
 
 import java.util.List;
 
-import org.antennae.server.notifier.entities.Channel;
-import org.antennae.server.notifier.entities.ChannelPriorityEnum;
-import org.antennae.server.notifier.entities.ChannelTypeEnum;
+import org.antennae.common.entitybeans.Channel;
+import org.antennae.common.beans.ChannelPriorityEnum;
+import org.antennae.common.beans.ChannelTypeEnum;
 
 public interface IChannelDao {
 

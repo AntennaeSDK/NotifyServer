@@ -22,9 +22,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.antennae.server.notifier.entities.Channel;
-import org.antennae.server.notifier.entities.ChannelPriorityEnum;
-import org.antennae.server.notifier.entities.ChannelTypeEnum;
+import org.antennae.common.entitybeans.Channel;
+import org.antennae.common.beans.ChannelPriorityEnum;
+import org.antennae.common.beans.ChannelTypeEnum;
 import org.antennae.server.notifier.repository.IChannelDao;
 import org.antennae.server.notifier.service.internal.IChannelService;
 import org.springframework.stereotype.Service;

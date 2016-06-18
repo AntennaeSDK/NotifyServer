@@ -18,7 +18,7 @@ package org.antennae.server.notifier.service.external;
 
 import java.util.List;
 
-import org.antennae.transport.AppDetails;
+import org.antennae.common.beans.AppDetails;
 
 public interface IRegistrationService {
 

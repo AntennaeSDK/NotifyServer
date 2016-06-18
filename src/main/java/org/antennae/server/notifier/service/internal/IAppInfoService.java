@@ -18,7 +18,7 @@ package org.antennae.server.notifier.service.internal;
 
 import java.util.List;
 
-import org.antennae.server.notifier.entities.AppInfo;
+import org.antennae.common.entitybeans.AppInfo;
 
 public interface IAppInfoService {
 	

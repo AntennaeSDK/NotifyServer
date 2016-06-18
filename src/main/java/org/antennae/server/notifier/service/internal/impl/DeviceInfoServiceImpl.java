@@ -20,7 +20,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.antennae.server.notifier.entities.DeviceInfo;
+import org.antennae.common.entitybeans.DeviceInfo;
 import org.antennae.server.notifier.repository.IDeviceInfoDao;
 import org.antennae.server.notifier.service.internal.IDeviceInfoService;
 import org.springframework.stereotype.Service;

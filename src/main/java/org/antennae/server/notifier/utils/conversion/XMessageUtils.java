@@ -19,7 +19,7 @@ package org.antennae.server.notifier.utils.conversion;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.antennae.server.notifier.entities.Message;
+import org.antennae.common.entitybeans.Message;
 import org.antennae.server.notifier.transport.ChatWebSocketMessage;
 
 public class XMessageUtils {

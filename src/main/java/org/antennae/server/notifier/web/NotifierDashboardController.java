@@ -29,7 +29,7 @@ import javax.inject.Inject;
 import org.antennae.server.notifier.gcm.xmpp.GcmXmppClient;
 import org.antennae.server.notifier.rest.RestClient;
 import org.antennae.server.notifier.service.external.IRegistrationService;
-import org.antennae.transport.AppDetails;
+import org.antennae.common.beans.AppDetails;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

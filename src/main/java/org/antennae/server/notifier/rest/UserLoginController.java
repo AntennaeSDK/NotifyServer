@@ -21,7 +21,7 @@ import java.net.URLDecoder;
 
 import javax.inject.Inject;
 
-import org.antennae.server.notifier.entities.User;
+import org.antennae.common.entitybeans.User;
 import org.antennae.server.notifier.service.external.IAuthenticationService;
 import org.antennae.server.notifier.transport.XAuthResult;
 import org.springframework.web.bind.annotation.RequestBody;

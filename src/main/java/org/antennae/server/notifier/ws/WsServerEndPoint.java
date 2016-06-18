@@ -28,10 +28,10 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
-import org.antennae.server.notifier.entities.ChannelClient;
-import org.antennae.server.notifier.entities.ClientStatusEnum;
-import org.antennae.server.notifier.entities.Message;
-import org.antennae.server.notifier.entities.User;
+import org.antennae.common.entitybeans.ChannelClient;
+import org.antennae.common.beans.ClientStatusEnum;
+import org.antennae.common.entitybeans.Message;
+import org.antennae.common.entitybeans.User;
 import org.antennae.server.notifier.init.SpringApplicationContext;
 import org.antennae.server.notifier.service.external.IUserService;
 import org.antennae.server.notifier.service.internal.IChannelClientService;

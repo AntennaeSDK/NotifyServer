@@ -25,9 +25,9 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.antennae.server.notifier.entities.Channel;
-import org.antennae.server.notifier.entities.Message;
-import org.antennae.server.notifier.entities.User;
+import org.antennae.common.entitybeans.Channel;
+import org.antennae.common.entitybeans.Message;
+import org.antennae.common.entitybeans.User;
 import org.antennae.server.notifier.service.external.IIncidentService;
 import org.antennae.server.notifier.service.external.IUserService;
 import org.antennae.server.notifier.transport.ChatWebSocketMessage;

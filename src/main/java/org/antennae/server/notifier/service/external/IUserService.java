@@ -18,7 +18,7 @@ package org.antennae.server.notifier.service.external;
 
 import java.util.List;
 
-import org.antennae.server.notifier.entities.User;
+import org.antennae.common.entitybeans.User;
 
 public interface IUserService {
 

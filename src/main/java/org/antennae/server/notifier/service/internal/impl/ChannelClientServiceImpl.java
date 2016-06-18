@@ -20,7 +20,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.antennae.server.notifier.entities.ChannelClient;
+import org.antennae.common.entitybeans.ChannelClient;
 import org.antennae.server.notifier.repository.IChannelClientDao;
 import org.antennae.server.notifier.service.internal.IChannelClientService;
 import org.springframework.stereotype.Service;

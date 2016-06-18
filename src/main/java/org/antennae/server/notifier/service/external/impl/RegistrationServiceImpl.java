@@ -21,12 +21,12 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.antennae.server.notifier.entities.AppInfo;
-import org.antennae.server.notifier.entities.DeviceInfo;
+import org.antennae.common.entitybeans.AppInfo;
+import org.antennae.common.entitybeans.DeviceInfo;
 import org.antennae.server.notifier.service.external.IRegistrationService;
 import org.antennae.server.notifier.service.internal.IAppInfoService;
 import org.antennae.server.notifier.service.internal.IDeviceInfoService;
-import org.antennae.transport.AppDetails;
+import org.antennae.common.beans.AppDetails;
 import org.springframework.stereotype.Service;
 
 @Service

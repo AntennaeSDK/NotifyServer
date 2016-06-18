@@ -24,7 +24,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import javax.inject.Inject;
 
-import org.antennae.server.notifier.entities.AuthToken;
+import org.antennae.common.entitybeans.AuthToken;
 import org.antennae.server.notifier.repository.IAuthTokenDao;
 import org.antennae.server.notifier.service.exception.AuthTokenException;
 import org.antennae.server.notifier.service.internal.IAuthTokenService;

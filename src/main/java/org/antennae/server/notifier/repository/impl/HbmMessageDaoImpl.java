@@ -20,7 +20,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.antennae.server.notifier.entities.Message;
+import org.antennae.common.entitybeans.Message;
 import org.antennae.server.notifier.repository.IMessageDao;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;

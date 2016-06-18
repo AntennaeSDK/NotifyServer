@@ -18,7 +18,7 @@ package org.antennae.server.notifier.repository;
 
 import java.util.List;
 
-import org.antennae.server.notifier.entities.DeviceInfo;
+import org.antennae.common.entitybeans.DeviceInfo;
 
 public interface IDeviceInfoDao {
 
