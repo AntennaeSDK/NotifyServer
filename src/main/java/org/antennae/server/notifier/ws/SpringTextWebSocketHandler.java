@@ -7,18 +7,17 @@ import org.antennae.server.notifier.entities.User;
 import org.antennae.server.notifier.service.external.IUserService;
 import org.antennae.server.notifier.service.internal.IChannelClientService;
 import org.antennae.server.notifier.service.internal.IMessageService;
-import org.antennae.server.notifier.transport.XWebSocketMessage;
+import org.antennae.server.notifier.transport.ChatWebSocketMessage;
 import org.antennae.server.notifier.utils.conversion.XMessageUtils;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import javax.inject.Inject;
-import javax.websocket.Session;
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SpringTextWebSocketHandler extends TextWebSocketHandler {
@@ -66,7 +65,15 @@ public class SpringTextWebSocketHandler extends TextWebSocketHandler {
         }
 
         // check whether the message is first message
-        XWebSocketMessage wsMsg = XWebSocketMessage.fromJson(message.getPayload());
+        ChatWebSocketMessage wsMsg = null;
+        try {
+            wsMsg = ChatWebSocketMessage.fromJson(message.getPayload());
+        }catch( Throwable throwable){
+            // if there is an error parsing the incomin message.
+            // simply ignore
+            logger.log(Level.CONFIG, "unable to parse the incoming message. ignoring ...");
+            return;
+        }
 
         logger.info("SessionId: " + session.getId() + ", message: " + wsMsg.toJson());
 
@@ -97,7 +104,7 @@ public class SpringTextWebSocketHandler extends TextWebSocketHandler {
                 // TODO: find clients that subscribe to the incident
 
                 // send the message to the subscribers
-                XWebSocketMessage xwsMsg = XMessageUtils.convertMessageToXWebSocketMessage(msg);
+                ChatWebSocketMessage xwsMsg = XMessageUtils.convertMessageToXWebSocketMessage(msg);
                 if (wsMsg.getSenderName() != null) {
                     xwsMsg.setSenderName(wsMsg.getSenderName());
                 } else {
@@ -107,9 +114,12 @@ public class SpringTextWebSocketHandler extends TextWebSocketHandler {
 
                 for (WebSocketSession s : userSessions) {
 
-                    //s.getAsyncRemote().sendText(xwsMsg.toJson());
                     try {
-                        s.sendMessage(xwsMsg.toSpringTextWebSocketMessage());
+
+                        if( s.isOpen() && !session.getId().equals(s.getId()) ){
+                            s.sendMessage(xwsMsg.toSpringTextWebSocketMessage());
+                        }
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

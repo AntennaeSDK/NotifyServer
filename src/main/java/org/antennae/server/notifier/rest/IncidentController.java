@@ -30,7 +30,7 @@ import org.antennae.server.notifier.entities.Message;
 import org.antennae.server.notifier.entities.User;
 import org.antennae.server.notifier.service.external.IIncidentService;
 import org.antennae.server.notifier.service.external.IUserService;
-import org.antennae.server.notifier.transport.XWebSocketMessage;
+import org.antennae.server.notifier.transport.ChatWebSocketMessage;
 import org.antennae.server.notifier.utils.conversion.XMessageUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -83,7 +83,7 @@ public class IncidentController {
 	
 	@RequestMapping(value="/api/incidents/{incidentId}/messages", method=RequestMethod.GET )
 	@ResponseBody
-	public List<XWebSocketMessage> getMessages( @PathVariable("incidentId") int incidentId ){
+	public List<ChatWebSocketMessage> getMessages(@PathVariable("incidentId") int incidentId ){
 		
 		List<Message> messages = incidentSvc.getMessages(incidentId);
 		
@@ -100,9 +100,9 @@ public class IncidentController {
 		List<User> fullusers = userSvc.getUsersForLoginIds(loginIds);
 		
 		// convert <Message> to <XMessage> 
-		List<XWebSocketMessage> msgs = XMessageUtils.convertMessageToXWebSocketMessage(messages);
+		List<ChatWebSocketMessage> msgs = XMessageUtils.convertMessageToXWebSocketMessage(messages);
 		
-		for( XWebSocketMessage m : msgs){
+		for( ChatWebSocketMessage m : msgs){
 			for( User u : fullusers ){
 				if( m.getSenderId().equals( u.getUserId()) ){
 					m.setSenderName(u.getName());

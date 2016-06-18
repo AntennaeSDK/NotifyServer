@@ -37,7 +37,7 @@ import org.antennae.server.notifier.service.external.IUserService;
 import org.antennae.server.notifier.service.internal.IChannelClientService;
 import org.antennae.server.notifier.service.internal.IMessageService;
 import org.antennae.server.notifier.service.internal.impl.ChannelClientServiceImpl;
-import org.antennae.server.notifier.transport.XWebSocketMessage;
+import org.antennae.server.notifier.transport.ChatWebSocketMessage;
 import org.antennae.server.notifier.utils.conversion.XMessageUtils;
 import org.apache.log4j.Logger;
 
@@ -98,7 +98,7 @@ public class WsServerEndPoint {
 		}
 		
 		// check whether the message is first message
-		XWebSocketMessage wsMsg = XWebSocketMessage.fromJson(message);
+		ChatWebSocketMessage wsMsg = ChatWebSocketMessage.fromJson(message);
 		
 		logger.debug("SessionId: " + userSession.getId() + ", message: " + wsMsg.toJson() );
 					
@@ -129,7 +129,7 @@ public class WsServerEndPoint {
 				// TODO: find clients that subscribe to the incident
 				
 				// send the message to the subscribers
-				XWebSocketMessage xwsMsg = XMessageUtils.convertMessageToXWebSocketMessage(msg);
+				ChatWebSocketMessage xwsMsg = XMessageUtils.convertMessageToXWebSocketMessage(msg);
 				if( wsMsg.getSenderName() != null ){
 					xwsMsg.setSenderName(wsMsg.getSenderName());
 				}else{

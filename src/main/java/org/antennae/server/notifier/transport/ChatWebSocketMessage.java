@@ -22,9 +22,8 @@ import org.antennae.server.notifier.entities.ClientTypeEnum;
 
 import com.google.gson.Gson;
 import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketMessage;
 
-public class XWebSocketMessage {
+public class ChatWebSocketMessage {
 	
 	// common fields
 	private int messageId;
@@ -126,9 +125,9 @@ public class XWebSocketMessage {
         Gson gson = new Gson();
         return gson.toJson( this);
     }
-    public static XWebSocketMessage fromJson( String json ){
+    public static ChatWebSocketMessage fromJson(String json ){
         Gson gson = new Gson();
-        return gson.fromJson(json, XWebSocketMessage.class);
+        return gson.fromJson(json, ChatWebSocketMessage.class);
     }
 
 	public TextMessage toSpringTextWebSocketMessage(){

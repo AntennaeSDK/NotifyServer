@@ -20,17 +20,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.antennae.server.notifier.entities.Message;
-import org.antennae.server.notifier.transport.XWebSocketMessage;
+import org.antennae.server.notifier.transport.ChatWebSocketMessage;
 
 public class XMessageUtils {
 
-	public static XWebSocketMessage convertMessageToXWebSocketMessage( Message message ){
+	public static ChatWebSocketMessage convertMessageToXWebSocketMessage(Message message ){
 		
 		if( message == null ){
 			throw new NullPointerException("Message cannot be null");
 		}
 		
-		XWebSocketMessage wsMsg = new XWebSocketMessage();
+		ChatWebSocketMessage wsMsg = new ChatWebSocketMessage();
 		
 		// common fields
 		wsMsg.getChannelId(message.getChannelId());
@@ -61,16 +61,16 @@ public class XMessageUtils {
 		return wsMsg;
 	}
 	
-	public static List<XWebSocketMessage> convertMessageToXWebSocketMessage( List<Message> messages ){
+	public static List<ChatWebSocketMessage> convertMessageToXWebSocketMessage(List<Message> messages ){
 		
 		if( messages == null ){
 			throw new NullPointerException("Messages cannot be null");
 		}
 		
-		List<XWebSocketMessage> msgs = new ArrayList<XWebSocketMessage>();
+		List<ChatWebSocketMessage> msgs = new ArrayList<ChatWebSocketMessage>();
 		
 		for( Message m : messages ){
-			XWebSocketMessage msg = convertMessageToXWebSocketMessage(m);
+			ChatWebSocketMessage msg = convertMessageToXWebSocketMessage(m);
 			msgs.add(msg);
 		}
 		
@@ -78,7 +78,7 @@ public class XMessageUtils {
 	}
 	
 	
-	public static Message convertXWebSocketMessageToMessage( XWebSocketMessage wsMsg){
+	public static Message convertXWebSocketMessageToMessage( ChatWebSocketMessage wsMsg){
 		if( wsMsg == null ){
 			throw new NullPointerException("WebSocketMessage cannot be null");
 		}
