@@ -18,6 +18,7 @@ package org.antennae.server.notifier.ws;
 
 import javax.websocket.server.ServerEndpointConfig.Configurator;
 
+@Deprecated
 public class WsServerEndPointConfigurer extends Configurator{
 	
 	private WsServerEndPoint wsServer = new WsServerEndPoint();

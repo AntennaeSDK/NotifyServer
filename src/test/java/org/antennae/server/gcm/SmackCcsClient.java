@@ -190,7 +190,7 @@ public class SmackCcsClient {
      * @param to RegistrationId of the target device (Required).
      * @param messageId Unique messageId for which CCS sends an
      *         "ack/nack" (Required).
-     * @param payload Message content intended for the application. (Optional).
+     * @param payload ServerMessage content intended for the application. (Optional).
      * @param collapseKey GCM collapse_key parameter (Optional).
      * @param timeToLive GCM time_to_live parameter (Optional).
      * @param delayWhileIdle GCM delay_while_idle parameter (Optional).
@@ -367,8 +367,8 @@ public class SmackCcsClient {
         // Send a sample hello downstream message to a device.
         String messageId = ccsClient.nextMessageId();
         Map<String, String> payload = new HashMap<String, String>();
-        payload.put("Message", "Ahha, it works!");
-        payload.put("CCS", "Dummy Message");
+        payload.put("ServerMessage", "Ahha, it works!");
+        payload.put("CCS", "Dummy ServerMessage");
         payload.put("EmbeddedMessageId", messageId);
         String collapseKey = "sample";
         Long timeToLive = 10000L;
@@ -376,7 +376,7 @@ public class SmackCcsClient {
                 collapseKey, timeToLive, true);
 
         ccsClient.sendDownstreamMessage(message);
-        logger.info("Message sent.");
+        logger.info("ServerMessage sent.");
         
         //crude loop to keep connection open for receiving messages
         while(true)

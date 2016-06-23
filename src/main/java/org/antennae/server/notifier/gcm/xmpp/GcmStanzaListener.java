@@ -35,7 +35,7 @@ public class GcmStanzaListener implements StanzaListener {
 		
 		logger.info("processing packet : " + packet );
 		//EmptyResultIQ incomingMessage = packet;
-		//Message incomingMessage = (Message) packet;
+		//ServerMessage incomingMessage = (ServerMessage) packet;
 		
 		Stanza incomingMessage = ( Stanza) packet;
         GcmPacketExtension gcmPacket =(GcmPacketExtension) incomingMessage.getExtension(GcmXmppClient.GCM_NAMESPACE);

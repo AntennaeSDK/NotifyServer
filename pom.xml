@@ -28,9 +28,14 @@
 
 		<!-- Antennae Dependencies -->
 		<dependency>
-			<groupId>org.antennae.commons</groupId>
-			<artifactId>common-api</artifactId>
-			<version>0.1.0</version>
+			<groupId>org.antennae.common</groupId>
+			<artifactId>client-api</artifactId>
+			<version>0.1.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.antennae.common</groupId>
+			<artifactId>server-api</artifactId>
+			<version>0.1.1</version>
 		</dependency>
 	
 		<!--  Spring Dependencies -->

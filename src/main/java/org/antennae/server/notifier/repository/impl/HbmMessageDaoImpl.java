@@ -42,7 +42,7 @@ public class HbmMessageDaoImpl implements IMessageDao {
 	@Override
 	@Transactional
 	public Message getMessage(int messageId) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Message where id = :ID ");
+		Query query = sessionFactory.getCurrentSession().createQuery("from ServerMessage where id = :ID ");
 		query.setInteger("ID", messageId);
 		
 		Message result =  null;
@@ -71,7 +71,7 @@ public class HbmMessageDaoImpl implements IMessageDao {
 	@Override
 	@Transactional
 	public List<Message> getMessages(int channelId) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Message where channelId = :channelId");
+		Query query = sessionFactory.getCurrentSession().createQuery("from ServerMessage where channelId = :channelId");
 		query.setInteger("channelId", channelId);
 		
 		List<Message> messages = (List<Message>) query.list();
@@ -81,7 +81,7 @@ public class HbmMessageDaoImpl implements IMessageDao {
 	@Override
 	@Transactional
 	public List<Message> getMessages() {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Message");
+		Query query = sessionFactory.getCurrentSession().createQuery("from ServerMessage");
 		List<Message> messages = (List<Message>)  query.list();
 		return messages;
 	}

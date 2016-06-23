@@ -20,10 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Properties;
 
 import org.antennae.server.notifier.db.NotifierConnectionProperties;
 import org.antennae.server.notifier.db.H2.H2SimpleDriverDatasourceFactory;
@@ -101,7 +99,9 @@ public class H2Config {
 //			builder.addScript("/db/h2/insert-data.sql");
 		}else{
 			logger.info("Database found");
-			generateH2Schema( datasource);
+			// TODO: check whether tables are present
+			// TODO: if the tables are not present create the tables
+			generateSchemaAndCreateTables( datasource);
 		}
 		
 		EmbeddedDatabase database = builder.build();
@@ -109,7 +109,7 @@ public class H2Config {
 		return database;
 	}
 
-	public void generateH2Schema(SimpleDriverDataSource dataSource){
+	public void generateSchemaAndCreateTables(SimpleDriverDataSource dataSource){
 		//create a minimal configuration
 		org.hibernate.cfg.Configuration cfg = new org.hibernate.cfg.Configuration();
 		cfg.setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
@@ -144,6 +144,7 @@ public class H2Config {
 
 		export.setDelimiter(";");
 		export.setFormat(true);
+		// create the tables in the DB and show the DDL in console
 		export.create(true, true);
 	}
 

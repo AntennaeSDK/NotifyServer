@@ -99,7 +99,7 @@ public class IncidentController {
 		// get the users details
 		List<User> fullusers = userSvc.getUsersForLoginIds(loginIds);
 		
-		// convert <Message> to <XMessage> 
+		// convert <ServerMessage> to <XMessage>
 		List<ChatWebSocketMessage> msgs = XMessageUtils.convertMessageToXWebSocketMessage(messages);
 		
 		for( ChatWebSocketMessage m : msgs){

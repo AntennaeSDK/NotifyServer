@@ -27,7 +27,7 @@ public class XMessageUtils {
 	public static ChatWebSocketMessage convertMessageToXWebSocketMessage(Message message ){
 		
 		if( message == null ){
-			throw new NullPointerException("Message cannot be null");
+			throw new NullPointerException("ServerMessage cannot be null");
 		}
 		
 		ChatWebSocketMessage wsMsg = new ChatWebSocketMessage();

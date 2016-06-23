@@ -166,7 +166,7 @@ public class GcmXmppClient {
         Long timeToLive = 10000L;
         
         String jsonMessage = createJsonMessage(registrationId, messageId, payload, collapseKey, timeToLive, true);
-        logger.info("Json Message " + jsonMessage);
+        logger.info("Json ServerMessage " + jsonMessage);
         
         if( !connectionDraining ){
         	try {
@@ -192,7 +192,7 @@ public class GcmXmppClient {
      *
      * @param to RegistrationId of the target device (Required).
      * @param messageId Unique messageId for which CCS sends an "ack/nack" (Required).
-     * @param payload Message content intended for the application. (Optional).
+     * @param payload ServerMessage content intended for the application. (Optional).
      * @param collapseKey GCM collapse_key parameter (Optional).
      * @param timeToLive GCM time_to_live parameter (Optional).
      * @param delayWhileIdle GCM delay_while_idle parameter (Optional).

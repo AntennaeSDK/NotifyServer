@@ -41,6 +41,7 @@ import org.antennae.server.notifier.transport.ChatWebSocketMessage;
 import org.antennae.server.notifier.utils.conversion.XMessageUtils;
 import org.apache.log4j.Logger;
 
+@Deprecated
 @ServerEndpoint(value="/ws", configurator=WsServerEndPointConfigurer.class)
 public class WsServerEndPoint {
 
