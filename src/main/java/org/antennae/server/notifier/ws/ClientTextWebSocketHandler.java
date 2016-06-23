@@ -1,5 +1,6 @@
 package org.antennae.server.notifier.ws;
 
+import org.antennae.common.messages.ClientMessage;
 import org.antennae.common.messages.ServerMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,84 +125,13 @@ public class ClientTextWebSocketHandler extends org.springframework.web.socket.h
     }
 
     @Override
-    public void process(ServerMessage message) {
+    public void receiveFromClient(ServerMessage message) {
 
     }
 
-    /*
+    @Override
+    public void sendToClient(ClientMessage clientMessage) {
 
-
-//        // check whether the incomingMessage is first incomingMessage
-//        ChatWebSocketMessage wsMsg = null;
-//        try {
-//            wsMsg = ChatWebSocketMessage.fromJson(incomingMessage.getPayload());
-//        }catch( Throwable throwable){
-//            // if there is an error parsing the incomin incomingMessage.
-//            // simply ignore
-//            logger.error("Unable to parse the incoming incomingMessage. ignoring...");
-//            return;
-//        }
-
-
-
-        /*
-        if (channelClientSvc != null) {
-
-            if (wsMsg.isFirstMessage()) {
-
-                // Register the client for the incident if it is a first incomingMessage
-
-                ChannelClient client = new ChannelClient();
-                client.setChannelId(wsMsg.getChannelId());
-                client.setToken(wsMsg.getToken());
-                client.setCreatedTime(wsMsg.getCreatedTime());
-                client.setClientStatus(ClientStatusEnum.LIVE);
-                client.setClientType(wsMsg.getClientType());
-
-                channelClientSvc.addClient(client);
-
-            } else {
-                // persist the incomingMessage
-                ServerMessage msg = XMessageUtils.convertXWebSocketMessageToMessage(wsMsg);
-                if (msg.getSentTime() == null) {
-                    Date sentTime = Calendar.getInstance().getTime();
-                    msg.setSentTime(sentTime);
-                }
-                messageSvc.addMessage(msg);
-
-                // TODO: find clients that subscribe to the incident
-
-                // send the incomingMessage to the subscribers
-                ChatWebSocketMessage xwsMsg=null;
-                try {
-                    xwsMsg = XMessageUtils.convertMessageToXWebSocketMessage(msg);
-                }catch(Throwable throwable){
-                    throwable.printStackTrace();
-                    return;
-                }
-
-
-                if (wsMsg.getSenderName() != null) {
-                    xwsMsg.setSenderName(wsMsg.getSenderName());
-                } else {
-                    User u = userSvc.getUserByLoginId(wsMsg.getSenderId());
-                    xwsMsg.setSenderName(u.getName());
-                }
-
-                for (WebSocketSession s : userSessions) {
-
-                    try {
-
-                        if( s.isOpen() && !session.getId().equals(s.getId()) ){
-                            s.sendMessage(xwsMsg.toSpringTextWebSocketMessage());
-                        }
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-        }*/
+    }
 
 }

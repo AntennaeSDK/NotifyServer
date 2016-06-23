@@ -1,12 +1,14 @@
 package org.antennae.server.notifier.ws;
 
+import org.antennae.common.messages.ClientMessage;
 import org.antennae.common.messages.ServerMessage;
-import org.antennae.common.messages.ServerTrackedMessage;
+import org.antennae.common.messages.ServerMessageWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +23,9 @@ public class ServerTextWebSocketHandler extends TextWebSocketHandler implements 
 
     private Map<String,WebSocketSession> serverSessions = new ConcurrentHashMap<String,WebSocketSession>();
 
+    @Inject
+    ClientTextWebSocketHandler clientTextWebSocketHandler;
+
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         logger.info("Server connection established " + session.getId());
@@ -29,6 +34,17 @@ public class ServerTextWebSocketHandler extends TextWebSocketHandler implements 
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        logger.info("Server message received: " + message.toString());
+
+        if( message == null ){
+            return;
+        }
+
+        String wsPayload = message.getPayload();
+        ClientMessage clientMessage = ClientMessage.fromJson(wsPayload);
+
+
+        clientTextWebSocketHandler.sendToClient( clientMessage );
     }
 
     @Override
@@ -53,9 +69,11 @@ public class ServerTextWebSocketHandler extends TextWebSocketHandler implements 
     public void processRequestResponse(String wsSessionId, ServerMessage message) {
 
         // TODO: get the right session that processes this message
-        ServerTrackedMessage trackedMessage = new ServerTrackedMessage();
+        ServerMessageWrapper trackedMessage = new ServerMessageWrapper();
         trackedMessage.setServerMessage(message);
         trackedMessage.setSessionId(wsSessionId);
+        // TODO: set the nodeId ( which uniquely identifies a antennae node )
+        // trackedMessage.setNodeId();
 
         Set<String> sessionKeys = serverSessions.keySet();
         for( String key : sessionKeys ){
