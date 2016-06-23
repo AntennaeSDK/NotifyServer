@@ -1,6 +1,7 @@
 package org.antennae.server.notifier.ws;
 
 import org.antennae.common.messages.ClientMessage;
+import org.antennae.common.messages.ClientMessageWrapper;
 import org.antennae.common.messages.ServerMessage;
 import org.antennae.common.messages.ServerMessageWrapper;
 import org.slf4j.Logger;
@@ -41,7 +42,7 @@ public class ServerTextWebSocketHandler extends TextWebSocketHandler implements 
         }
 
         String wsPayload = message.getPayload();
-        ClientMessage clientMessage = ClientMessage.fromJson(wsPayload);
+        ClientMessageWrapper clientMessage = ClientMessageWrapper.fromJson(wsPayload);
 
 
         clientTextWebSocketHandler.sendToClient( clientMessage );

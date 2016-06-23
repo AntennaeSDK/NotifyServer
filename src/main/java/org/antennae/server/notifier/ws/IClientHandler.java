@@ -1,6 +1,7 @@
 package org.antennae.server.notifier.ws;
 
 import org.antennae.common.messages.ClientMessage;
+import org.antennae.common.messages.ClientMessageWrapper;
 import org.antennae.common.messages.ServerMessage;
 
 /**
@@ -12,6 +13,6 @@ public interface IClientHandler {
     public void receiveFromClient(ServerMessage serverMessage );
 
     // to be sent to the client
-    public void sendToClient(ClientMessage clientMessage);
+    public void sendToClient(ClientMessageWrapper clientMessage);
 
 }

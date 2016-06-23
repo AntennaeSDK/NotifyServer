@@ -1,14 +1,17 @@
 package org.antennae.server.notifier.ws;
 
 import org.antennae.common.messages.ClientMessage;
+import org.antennae.common.messages.ClientMessageWrapper;
 import org.antennae.common.messages.ServerMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import javax.inject.Inject;
+import javax.websocket.Session;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -101,23 +104,6 @@ public class ClientTextWebSocketHandler extends org.springframework.web.socket.h
         // response expected from client
         serverHandler.processRequestResponse( sessionId, message);
 
-/*        // TODO: send the message to the same session
-        WebSocketSession session = clientSessions.get(sessionId);
-        if( session != null && session.isOpen() ){
-            TextMessage textMessage = new TextMessage( received.toJson());
-
-            try {
-                session.sendMessage( textMessage );
-            } catch (IOException e) {
-                e.printStackTrace();
-
-                // TODO: if the message failed try sending the message through GCM
-            }
-        }else{
-            // TODO: if the session is not active, then check if there is a new session for the client-app.
-            //       else send the message through GCM
-        }*/
-
     }
 
     private void processPointToPoint( ServerMessage message ){
@@ -129,9 +115,50 @@ public class ClientTextWebSocketHandler extends org.springframework.web.socket.h
 
     }
 
+    /**
+     * <code>sendToClient</code> sends the message to clients ( real-world clients ).
+     * It first tries to send through an existing session (connection).
+     * If connection is not found, then sends the message through GCM/APNS.
+     *
+     * @param clientMessageWrapper
+     */
     @Override
-    public void sendToClient(ClientMessage clientMessage) {
+    public void sendToClient(ClientMessageWrapper clientMessageWrapper) {
 
+        if( clientMessageWrapper == null ){
+            return;
+        }
+
+        ClientMessage clientMessage = clientMessageWrapper.getClientMessage();
+        if( clientMessage == null ){
+            return;
+        }
+
+        String sessionId = clientMessageWrapper.getSessionId();
+        if( sessionId != null && clientSessions.get(sessionId) != null ){
+
+            WebSocketSession session = clientSessions.get(sessionId);
+
+            if( session.isOpen() ){
+
+                TextMessage textMessage = new TextMessage( clientMessage.getPayLoad());
+
+                try {
+
+                    session.sendMessage( textMessage );
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }else{
+
+                // TODO: send the message using GCM, or when the app wakes up
+            }
+        }else{
+            // TODO: send the message thru GCM or when the app wakes up
+        }
     }
+
 
 }
