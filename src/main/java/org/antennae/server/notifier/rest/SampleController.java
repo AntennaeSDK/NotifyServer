@@ -26,7 +26,7 @@ public class SampleController {
         message.sender = "N1";
 
         Message.Body body = new Message.Body();
-        body.text = "Response from API :\n" + MicroTimestamp.INSTANCE.getMillis();
+        body.text = "Response from API :\n" + MicroTimestamp.INSTANCE.get();
 
         message.body = body;
 
