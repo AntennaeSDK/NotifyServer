@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -25,20 +26,13 @@ public class SampleController {
         message.sender = "N1";
 
         Message.Body body = new Message.Body();
-        body.text = "Sample Response from API @ " + getCurrentTimestamp();
+        body.text = "Response from API :\n" + MicroTimestamp.INSTANCE.getMillis();
 
         message.body = body;
 
         return message.toJson();
     }
 
-    private String getCurrentTimestamp(){
-
-        long time = Calendar.getInstance().getTimeInMillis();
-        Date date = new Date(time);
-
-        return date.toString();
-    }
 
     public static class Message{
         String id;
@@ -61,6 +55,34 @@ public class SampleController {
             Gson gson = new Gson();
             Message message = gson.fromJson( json, Message.class);
             return message;
+        }
+    }
+
+    /**
+     * Class to generate timestamps with microsecond precision
+     * For example: MicroTimestamp.INSTANCE.get() = "2012-10-21 19:13:45.267128"
+     */
+    public enum MicroTimestamp
+    {  INSTANCE ;
+
+        private long              startDate ;
+        private long              startNanoseconds ;
+        private SimpleDateFormat dateFormat ;
+
+        private MicroTimestamp()
+        {  this.startDate = System.currentTimeMillis() ;
+            this.startNanoseconds = System.nanoTime() ;
+            this.dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS") ;
+        }
+
+        public String get()
+        {   long microSeconds = (System.nanoTime() - this.startNanoseconds) / 1000 ;
+            long date = this.startDate + (microSeconds/1000) ;
+            return this.dateFormat.format(date) + String.format("%03d", microSeconds % 1000) ;
+        }
+
+        public String getMillis(){
+            return this.dateFormat.format(startDate);
         }
     }
 }
