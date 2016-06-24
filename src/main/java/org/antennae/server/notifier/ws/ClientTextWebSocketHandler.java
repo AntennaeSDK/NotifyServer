@@ -1,5 +1,6 @@
 package org.antennae.server.notifier.ws;
 
+import org.antennae.common.messages.ClientAddress;
 import org.antennae.common.messages.ClientMessage;
 import org.antennae.common.messages.ClientMessageWrapper;
 import org.antennae.common.messages.ServerMessage;
@@ -7,13 +8,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import javax.inject.Inject;
-import javax.websocket.Session;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -26,6 +26,7 @@ public class ClientTextWebSocketHandler extends org.springframework.web.socket.h
 
     private static Logger logger = LoggerFactory.getLogger(ClientTextWebSocketHandler.class);
     private Map<String,WebSocketSession> clientSessions = new ConcurrentHashMap<String,WebSocketSession>();
+    private Map<String, ClientAddress> clientAddresses = new ConcurrentHashMap<String,ClientAddress>();
 
     @Inject
     ServerTextWebSocketHandler serverHandler;
@@ -47,6 +48,9 @@ public class ClientTextWebSocketHandler extends org.springframework.web.socket.h
         logger.info("Client connection closed: " + session.getId() + ", status :" + status.toString());
         if( clientSessions.get(session.getId()) != null ){
             clientSessions.remove(session.getId());
+        }
+        if( clientAddresses.get(session.getId()) != null ){
+            clientAddresses.remove(session.getId());
         }
     }
 
@@ -73,6 +77,16 @@ public class ClientTextWebSocketHandler extends org.springframework.web.socket.h
             return;
         }
 
+        // cache the clientAddress
+        if( message.getFrom() != null ){
+            ClientAddress client = message.getFrom();
+            ClientAddress stored = clientAddresses.get( session.getId());
+            if( stored == null ){
+                clientAddresses.put(session.getId(), client);
+            }else if( !client.equals(stored)) {
+                // TODO: handle error situations
+            }
+        }
         // TODO: Store the message in a DB before proecessing
 
         // check whether the incomingMessage is meant for the server or a user/app
@@ -125,40 +139,59 @@ public class ClientTextWebSocketHandler extends org.springframework.web.socket.h
     @Override
     public void sendToClient(ClientMessageWrapper clientMessageWrapper) {
 
-        if( clientMessageWrapper == null ){
+        if( clientMessageWrapper == null || clientMessageWrapper.getClientMessage() == null ){
+            logger.debug("incoming client message is null. returning...");
             return;
         }
 
         ClientMessage clientMessage = clientMessageWrapper.getClientMessage();
-        if( clientMessage == null ){
-            return;
-        }
 
+        // find a session
+        WebSocketSession session = null;
         String sessionId = clientMessageWrapper.getSessionId();
         if( sessionId != null && clientSessions.get(sessionId) != null ){
-
-            WebSocketSession session = clientSessions.get(sessionId);
-
-            if( session.isOpen() ){
-
-                TextMessage textMessage = new TextMessage( clientMessage.getPayLoad());
-
-                try {
-
-                    session.sendMessage( textMessage );
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }else{
-
-                // TODO: send the message using GCM, or when the app wakes up
-            }
+            session = clientSessions.get(sessionId);
         }else{
-            // TODO: send the message thru GCM or when the app wakes up
+            session = getSesssionForClient(clientMessage.getTo());
+        }
+
+        // send the message
+        if( session != null && session.isOpen() ){
+
+            TextMessage textMessage = new TextMessage( clientMessage.getPayLoad());
+            try {
+                session.sendMessage( textMessage );
+            } catch (IOException e) {
+                e.printStackTrace();
+                // TODO: send thru GCM or when the app wakes up
+            }
+
+        }else{
+            // TODO: send the message using GCM, or when the app wakes up
         }
     }
 
 
+    private WebSocketSession getSesssionForClient(ClientAddress clientAddress ){
+
+        WebSocketSession result=null;
+
+        Set<String> sessionIds = clientAddresses.keySet();
+        String found = null;
+        for( String sessionId : sessionIds ){
+            ClientAddress address = clientAddresses.get(sessionId);
+            if( address.getAppName().equals(clientAddress.getAppName()) &&
+                    address.getAppVersion().equals(clientAddress.getAppVersion()) &&
+                    address.getDeviceId().equals(clientAddress.getDeviceId()) ){
+                    // TODO: make sure to search based on userId
+                found = sessionId;
+                break;
+            }
+        }
+        if( found != null ) {
+            result = clientSessions.get(found);
+        }
+
+        return result;
+    }
 }

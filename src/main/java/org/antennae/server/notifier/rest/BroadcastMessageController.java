@@ -38,7 +38,7 @@ public class BroadcastMessageController {
 	@Inject
 	private IRegistrationService registrationService;
 	
-	@RequestMapping(value="/api/messages", method=RequestMethod.POST)
+/*	@RequestMapping(value="/api/messages", method=RequestMethod.POST)
 	@ResponseBody
 	public String sendMessage( @RequestBody  String message){
 		
@@ -52,5 +52,5 @@ public class BroadcastMessageController {
 		}
 		
 		return "message sent";
-	}
+	}*/
 }
