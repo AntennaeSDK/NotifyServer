@@ -1,9 +1,9 @@
 package org.antennae.server.notifier.ws;
 
-import org.antennae.common.messages.ClientAddress;
-import org.antennae.common.messages.ClientMessage;
-import org.antennae.common.messages.ClientMessageWrapper;
-import org.antennae.common.messages.ServerMessage;
+import org.antennae.common.messages.*;
+import org.antennae.common.messages.util.JsonUtil;
+import org.antennae.server.notifier.rest.RestClient;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.CloseStatus;
@@ -62,49 +62,91 @@ public class ClientTextWebSocketHandler extends org.springframework.web.socket.h
         }
 
         String textmessage = incomingMessage.getPayload();
-
         logger.info("SessionId: " + session.getId() + ", incomingMessage: " + textmessage );
 
-        ServerMessage message=null;
+        String clazzName = JsonUtil.identifyClassType(textmessage);
+
         try {
-            message = ServerMessage.fromJson(textmessage);
+
+            if( clazzName == null ){
+
+                logger.debug("ClassName is unknown. Unable to parse the incoming message.");
+                return;
+
+            }else if (clazzName.equals(ServerMessage.class.getName())) {
+
+                ServerMessage serverMessage = ServerMessage.fromJson(textmessage);
+                processServerMessage( session, serverMessage);
+
+            } else if (clazzName.equals(ServerRestMessage.class.getName())) {
+
+                ServerRestMessage serverRestMessage = ServerRestMessage.fromJson(textmessage);
+                processRestServerMessage(session, serverRestMessage );
+            }
+
         }catch( Throwable throwable ){
             logger.error("Unable to parse the incoming incomingMessage. ignoring...");
             return;
         }
+    }
 
-        if( message == null ){
+    private void processServerMessage( WebSocketSession session, ServerMessage serverMessage){
+        if( serverMessage == null ){
             return;
         }
 
-        // cache the clientAddress
-        if( message.getFrom() != null ){
-            ClientAddress client = message.getFrom();
-            ClientAddress stored = clientAddresses.get( session.getId());
-            if( stored == null ){
-                clientAddresses.put(session.getId(), client);
-            }else if( !client.equals(stored)) {
-                // TODO: handle error situations
-            }
+        // Cache the client address
+        if( serverMessage.getFrom() != null ){
+            cacheTheClientAddress( session, serverMessage.getFrom());
         }
+
         // TODO: Store the message in a DB before proecessing
 
         // check whether the incomingMessage is meant for the server or a user/app
         // if topic is set, then it is meant for server side processing
         // if "ServerAddress" object is set, then it should be sent to the appropriate user/app.
 
-        switch ( message.getMessageType()){
+        switch ( serverMessage.getMessageType()){
             case PUB_SUB:
                 // the message is sent to the correct processor (consumer) of that message.
                 // no response expected
-                processPubSub( message);
+                processPubSub( serverMessage);
                 break;
             case REQUEST_RESPONSE:
                 // Request-Response is similar to PUB_SUB.
                 // but the "consumer" sends the a response, which will be sent back the original "producer"
-                processRequestResponse( session.getId(), message );
+                processRequestResponse( session.getId(), serverMessage );
                 break;
         }
+    }
+
+    private void cacheTheClientAddress( WebSocketSession session, ClientAddress clientAddress){
+        ClientAddress stored = clientAddresses.get( session.getId());
+
+        if( stored == null ){
+            clientAddresses.put(session.getId(), clientAddress);
+        }else if( !clientAddress.equals(stored)) {
+            // TODO: handle error situations
+        }
+    }
+
+    private void processRestServerMessage( WebSocketSession session, ServerRestMessage serverRestMessage ){
+
+        // Cache the client address
+        if( serverRestMessage.getFrom() != null ){
+            cacheTheClientAddress( session, serverRestMessage.getFrom());
+        }
+
+        // construct the REST call
+        RestClient client = new RestClient( serverRestMessage.getHost());
+        String result = client.GET( serverRestMessage.getPath());
+
+        ClientMessage response = new ClientMessage( serverRestMessage.getRequestId());
+        response.setTo( serverRestMessage.getFrom());
+        response.setPayLoad( result );
+        response.setMessageQOS( ClientMessageQOSEnum.DIRECT_CONNECTION_ONLY );
+
+        sendToClient(session, response);
     }
 
     // This message should be processed by server side
@@ -156,6 +198,25 @@ public class ClientTextWebSocketHandler extends org.springframework.web.socket.h
         }
 
         // send the message
+        sendToClient( session, clientMessage );
+/*        if( session != null && session.isOpen() ){
+
+            TextMessage textMessage = new TextMessage( clientMessage.getPayLoad());
+            try {
+                session.sendMessage( textMessage );
+            } catch (IOException e) {
+                e.printStackTrace();
+                // TODO: send thru GCM or when the app wakes up
+            }
+
+        }else{
+            // TODO: send the message using GCM, or when the app wakes up
+        }*/
+    }
+
+    public void sendToClient( WebSocketSession session, ClientMessage clientMessage ){
+
+        // send the message
         if( session != null && session.isOpen() ){
 
             TextMessage textMessage = new TextMessage( clientMessage.getPayLoad());
@@ -194,4 +255,6 @@ public class ClientTextWebSocketHandler extends org.springframework.web.socket.h
 
         return result;
     }
+
+
 }

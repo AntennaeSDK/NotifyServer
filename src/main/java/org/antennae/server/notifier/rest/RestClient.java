@@ -58,7 +58,8 @@ public class RestClient {
 	public String GET(String url){
 		
 		HttpEntity<String> requestEntity = new HttpEntity<String>("",headers);
-		ResponseEntity<String> responseEntity = rest.exchange(server, HttpMethod.GET, requestEntity, String.class);
+		String fullurl = server + url;
+		ResponseEntity<String> responseEntity = rest.exchange(fullurl, HttpMethod.GET, requestEntity, String.class);
 		
 		this.setStatus(responseEntity.getStatusCode());
 		
